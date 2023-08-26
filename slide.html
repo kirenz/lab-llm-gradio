@@ -110,7 +110,19 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#guidelines" id="toc-guidelines" class="nav-link active" data-scroll-target="#guidelines"><span class="header-section-number">1</span> Guidelines</a></li>
+  <li><a href="#iterative-prompt-development" id="toc-iterative-prompt-development" class="nav-link" data-scroll-target="#iterative-prompt-development"><span class="header-section-number">2</span> Iterative prompt development</a></li>
+  <li><a href="#summarize-text" id="toc-summarize-text" class="nav-link" data-scroll-target="#summarize-text"><span class="header-section-number">3</span> Summarize text</a></li>
+  <li><a href="#inferring" id="toc-inferring" class="nav-link" data-scroll-target="#inferring"><span class="header-section-number">4</span> Inferring</a></li>
+  <li><a href="#transforming" id="toc-transforming" class="nav-link" data-scroll-target="#transforming"><span class="header-section-number">5</span> Transforming</a></li>
+  <li><a href="#expanding" id="toc-expanding" class="nav-link" data-scroll-target="#expanding"><span class="header-section-number">6</span> Expanding</a></li>
+  <li><a href="#chatbot" id="toc-chatbot" class="nav-link" data-scroll-target="#chatbot"><span class="header-section-number">7</span> Chatbot</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -132,7 +144,7 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>This is a Quarto slidedeck.</p>
+<p>For cost reasons we mainly use OpenAI’s <code>gpt-3.5-turbo</code> model in our tutorials. However, you can simply replace <code>model="gpt-3.5-turbo"</code> with <code>model="gpt-4"</code> in the helper function. Note the <a href="https://openai.com/pricing">price difference</a> between the two models.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -143,8 +155,58 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<section id="guidelines" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="guidelines"><span class="header-section-number">1</span> Guidelines</h2>
+<p>In this tutorial, you’ll practice two prompting principles and their related tactics in order to write effective prompts for large language models:</p>
+<ul>
+<li><a href="./slides/guidelines.qmd">🖥️ Guidelines</a></li>
+</ul>
+</section>
+<section id="iterative-prompt-development" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="iterative-prompt-development"><span class="header-section-number">2</span> Iterative prompt development</h2>
+<p>In this tutorial, you’ll iteratively analyze and refine your prompts to generate marketing copy from a product fact sheet.</p>
+<ul>
+<li><a href="./slides/iterative-prompt-development.qmd">🖥️ Iterative prompt development</a></li>
+</ul>
+</section>
+<section id="summarize-text" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="summarize-text"><span class="header-section-number">3</span> Summarize text</h2>
+<p>In this tutorial, you will summarize text with a focus on specific topics.</p>
+<ul>
+<li><a href="./slides/iterative-prompt-development.qmd">🖥️ Summarize text</a></li>
+</ul>
+</section>
+<section id="inferring" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="inferring"><span class="header-section-number">4</span> Inferring</h2>
+<p>In this tutorial, you will infer sentiment and topics from product reviews and news articles.</p>
+<ul>
+<li><a href="./slides/inferring.qmd">🖥️ Inferring</a></li>
+</ul>
+</section>
+<section id="transforming" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="transforming"><span class="header-section-number">5</span> Transforming</h2>
+<p>In this presentation, we will explore how to use Large Language Models for text transformation tasks such as language translation, spelling and grammar checking, tone adjustment, and format conversion.</p>
+<ul>
+<li><a href="./slides/transforming.qmd">🖥️ Transforming</a></li>
+</ul>
+</section>
+<section id="expanding" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="expanding"><span class="header-section-number">6</span> Expanding</h2>
+<p>In this tutorial, you will generate customer service emails that are tailored to each customer’s review.</p>
+<ul>
+<li><a href="./slides/expanding.qmd">🖥️ Expanding</a></li>
+</ul>
+</section>
+<section id="chatbot" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="chatbot"><span class="header-section-number">7</span> Chatbot</h2>
+<p>In this presentation, you will explore how you can utilize the chat format to have extended conversations with chatbots personalized or specialized for specific tasks or behaviors.</p>
+<p>We use <a href="https://panel.holoviz.org/">Panel</a>, an open-source Python library that lets you easily build powerful tools, dashboards and complex applications entirely in Python.</p>
+<ul>
+<li><a href="./slides/chatbot.qmd">🖥️ Chatbot</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
