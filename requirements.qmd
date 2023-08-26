@@ -8,8 +8,5 @@ To start this lab, you'll need:
 Visit the "[Programming Toolkit-webpage](https://kirenz.github.io/lab-toolkit/)" to learn how to meet all requirements.
 :::
 
-- **Python**: Anaconda, Anaconda Environment `prompt` and Visual Studio Code
-- **Environment**: A folder on your machine called *prompt*, an OpenAI-API key and an environment file with your OpenAI-API keyqu
-
-
-- Basic knowledge about HuggingFace and some NLP tasks: Text summarization, 
+- **Python**: Anaconda, Anaconda Environment `gradio` and Visual Studio Code
+- **Environment**: A lab folder on your machine, an HuggingFace key and an environment file with your HuggingFace key
