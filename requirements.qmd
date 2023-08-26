@@ -12,3 +12,4 @@ Visit the "[Programming Toolkit-webpage](https://kirenz.github.io/lab-toolkit/)"
 - **Environment**: A folder on your machine called *prompt*, an OpenAI-API key and an environment file with your OpenAI-API keyqu
 
 
+- Basic knowledge about HuggingFace and some NLP tasks: Text summarization, 
