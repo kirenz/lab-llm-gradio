@@ -46,7 +46,7 @@
     "href": "slides/1_nlp_apps.html#summarization-example",
     "title": "Gradio NLP Apps",
     "section": "Summarization example",
-    "text": "Summarization example\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\nsummarize(text)"
+    "text": "Summarization example\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\nsummarize(text)\n\n\n’ Gradio allows you to build demos and share them in just a few lines of code . The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. “text”, “image” or “audio) or”label”)’"
   },
   {
     "objectID": "slides/1_nlp_apps.html#summarization-example-output",
@@ -236,5 +236,12 @@
     "title": "Gradio Image Captioning App",
     "section": "Close all connections",
     "text": "Close all connections\n\ngr.close_all()"
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#api-code-optional",
+    "href": "slides/1_nlp_apps.html#api-code-optional",
+    "title": "Gradio NLP Apps",
+    "section": "API code (optional)",
+    "text": "API code (optional)\n\nIn our example: to run it via API, you could use an Inference Endpoint for the sshleifer/distilbart-cnn-12-6, a 306M parameter distilled model from facebook/bart-large-cnn.\n\n\n\n# # Helper function\n# import requests, json\n\n\n# #Summarization endpoint\n# def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL, headers=headers,\n#                                 data=json.dumps(data)\n#                                )\n#     return json.loads(response.content.decode(\"utf-8\"))"
   }
 ]
