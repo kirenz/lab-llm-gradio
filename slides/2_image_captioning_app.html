@@ -12,7 +12,7 @@
   <meta name="generator" content="quarto-1.3.450">
 
   <meta name="author" content="Jan Kirenz">
-  <title>Gradio Apps - Gradio NLP Apps</title>
+  <title>Gradio Apps - Gradio Image Captioning App</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -394,8 +394,8 @@
     <div class="slides">
 
 <section id="title-slide" data-background-image="../images/logo.png" data-background-opacity="0.5" data-background-size="contain" class="quarto-title-block center">
-  <h1 class="title">Gradio NLP Apps</h1>
-  <p class="subtitle">Gradio Tutorial 1</p>
+  <h1 class="title">Gradio Image Captioning App</h1>
+  <p class="subtitle">Gradio Tutorial 2</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -409,306 +409,170 @@ Jan Kirenz
 <nav role="doc-toc"> 
 <h2 id="toc-title">Table of contents</h2>
 <ul>
-<li class="fragment"><a href="#/nlp-apps-with-a-simple-gradio-interface" id="/toc-nlp-apps-with-a-simple-gradio-interface">NLP apps with a simple Gradio interface</a></li>
-<li class="fragment"><a href="#/setup" id="/toc-setup">Setup</a></li>
-<li class="fragment"><a href="#/text-summarization-app" id="/toc-text-summarization-app">Text Summarization App</a></li>
-<li class="fragment"><a href="#/named-entity-recognition-app" id="/toc-named-entity-recognition-app">Named Entity Recognition App</a></li>
+<li class="fragment"><a href="#/image-captioning-app" id="/toc-image-captioning-app">Image Captioning App</a></li>
+<li class="fragment"><a href="#/image-captioning" id="/toc-image-captioning">Image Captioning</a></li>
 <li class="fragment"><a href="#/whats-next" id="/toc-whats-next">What’s next?</a></li>
 </ul>
 </nav>
 </section>
-<section id="nlp-apps-with-a-simple-gradio-interface" class="title-slide slide level1 center">
-<h1>NLP apps with a simple Gradio interface</h1>
+<section>
+<section id="image-captioning-app" class="title-slide slide level1 center">
+<h1>Image Captioning App</h1>
 
 </section>
-
-<section>
-<section id="setup" class="title-slide slide level1 center">
-<h1>Setup</h1>
-
+<section id="setup" class="slide level2">
+<h2>Setup</h2>
 </section>
 <section id="python" class="slide level2">
 <h2>Python</h2>
+<p>Load your HF API key and relevant Python libraries.</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> os</span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> io</span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="im">from</span> IPython.display <span class="im">import</span> Image, display, HTML</span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> base64</span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
-<span id="cb1-9"><a href="#cb1-9"></a>_ <span class="op">=</span> load_dotenv(find_dotenv())  <span class="co"># read local .env file</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a></span>
-<span id="cb1-11"><a href="#cb1-11"></a>hf_api_key <span class="op">=</span> os.environ[<span class="st">'HF_API_KEY'</span>]  <span class="co"># HuggingFace API</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> os</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> io</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> requests</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> json</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> IPython.display</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> base64</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
+<span id="cb1-11"><a href="#cb1-11"></a>_ <span class="op">=</span> load_dotenv(find_dotenv())  <span class="co"># read local .env file</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>hf_api_key <span class="op">=</span> os.environ[<span class="st">'HF_API_KEY'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="image-captioning-model" class="slide level2">
+<h2>Image captioning model</h2>
+<ul>
+<li class="fragment">Here we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.</li>
+</ul>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>get_completion <span class="op">=</span> pipeline(</span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="st">"image-to-text"</span>, model<span class="op">=</span><span class="st">"Salesforce/blip-image-captioning-base"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
+<span id="cb2-6"><a href="#cb2-6"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'generated_text'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="api-code-optional" class="slide level2 smaller">
+<h2>API-code (optional)</h2>
+<ul>
+<li class="fragment">Optional: Here is the code for the API-version:</li>
+</ul>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Image-to-text endpoint (with API)</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># def get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_ITT_BASE']):</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co">#     headers = {</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co">#       "Authorization": f"Bearer {hf_api_key}",</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#       "Content-Type": "application/json"</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">#     }</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#     data = { "inputs": inputs }</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#     if parameters is not None:</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#         data.update({"parameters": parameters})</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#     response = requests.request("POST",</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#                                 ENDPOINT_URL,</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#                                 headers=headers,</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#                                 data=json.dumps(data))</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#     return json.loads(response.content.decode("utf-8"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section></section>
 <section>
-<section id="text-summarization-app" class="title-slide slide level1 center">
-<h1>Text Summarization App</h1>
-<p>Building a text summarization app</p>
+<section id="image-captioning" class="title-slide slide level1 center">
+<h1>Image Captioning</h1>
+
 </section>
-<section id="text-summarization" class="slide level2">
-<h2>Text summarization</h2>
+<section id="image-example" class="slide level2">
+<h2>Image example</h2>
 <ul>
-<li class="fragment">To learn more about text summarization, take a look at <a href="https://kirenz.github.io/huggingface/text-summarization/summarization-pipeline#/title-slide">this tutorial</a></li>
+<li class="fragment">Free images are available on: https://free-images.com/</li>
 </ul>
-</section>
-<section id="helper-function-summarization-pipeline" class="slide level2">
-<h2>Helper function: summarization pipeline</h2>
-<div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>get_completion <span class="op">=</span> pipeline(</span>
-<span id="cb2-2"><a href="#cb2-2"></a>    <span class="st">"summarization"</span>, model<span class="op">=</span><span class="st">"sshleifer/distilbart-cnn-12-6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="api-version" class="slide level2 smaller">
-<h2>API-version</h2>
-<ul>
-<li class="fragment"><p>The code would look very similar if you were running it from an API instead of locally.</p></li>
-<li class="fragment"><p>The same is true for all the tutorials in the rest of the course, make sure to check the <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">Pipelines</a> documentation page</p></li>
-</ul>
-</section>
-<section id="api-code-optional" class="slide level2">
-<h2>API code (optional)</h2>
-<ul>
-<li class="fragment">In our example: to run it via API, you could use an <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for the <code>sshleifer/distilbart-cnn-12-6</code>, a 306M parameter distilled model from <code>facebook/bart-large-cnn</code>.</li>
-</ul>
-<div class="fragment">
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># # Helper function</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># import requests, json</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a></span>
-<span id="cb3-5"><a href="#cb3-5"></a><span class="co"># #Summarization endpoint</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co">#     headers = {</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#       "Authorization": f"Bearer {hf_api_key}",</span></span>
-<span id="cb3-9"><a href="#cb3-9"></a><span class="co">#       "Content-Type": "application/json"</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#     }</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#     data = { "inputs": inputs }</span></span>
-<span id="cb3-12"><a href="#cb3-12"></a><span class="co">#     if parameters is not None:</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#         data.update({"parameters": parameters})</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a><span class="co">#     response = requests.request("POST",</span></span>
-<span id="cb3-15"><a href="#cb3-15"></a><span class="co">#                                 ENDPOINT_URL, headers=headers,</span></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co">#                                 data=json.dumps(data)</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="co">#                                )</span></span>
-<span id="cb3-18"><a href="#cb3-18"></a><span class="co">#     return json.loads(response.content.decode("utf-8"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</section>
-<section id="text-to-summarize" class="slide level2 smaller">
-<h2>Text to summarize</h2>
 <div class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>text <span class="op">=</span> (<span class="st">'''One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface. The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. "text", "image" or "audio"); outputs: which component(s) to use for the output (e.g. "text", "image" or "label") '''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>image_url <span class="op">=</span> <span class="st">"https://free-images.com/sm/9596/dog_animal_greyhound_983023.jpg"</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>display(IPython.display.Image(url<span class="op">=</span>image_url))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="summarization-example" class="slide level2 smaller">
-<h2>Summarization example</h2>
+<section id="model-output" class="slide level2">
+<h2>Model output</h2>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb5-2"><a href="#cb5-2"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb5-3"><a href="#cb5-3"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a></span>
-<span id="cb5-6"><a href="#cb5-6"></a>summarize(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>get_completion(image_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
-<li class="fragment">’ Gradio allows you to build demos and share them in just a few lines of code . The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g.&nbsp;“text”, “image” or “audio) or”label”)’</li>
+<li class="fragment">[{‘generated_text’: ‘a dog wearing a santa hat and a red scarf’}]</li>
 </ul>
 </section>
-<section id="gradio-app-code" class="slide level2 smaller">
-<h2>Gradio app code</h2>
-<ul>
-<li class="fragment">Getting started with Gradio <code>gr.Interface</code></li>
-<li class="fragment">If you want to use the API-version, replace <code>demo.launch(share=False)</code> with <code>demo.launch(share=True, server_port=int(os.environ['PORT1']))</code></li>
-</ul>
-<div class="fragment">
+<section id="captioning-with-gr.interface" class="slide level2">
+<h2>Captioning with gr.Interface()</h2>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Helper function</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb6-5"><a href="#cb6-5"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb6-6"><a href="#cb6-6"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb6-7"><a href="#cb6-7"></a></span>
-<span id="cb6-8"><a href="#cb6-8"></a></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="co"># Close all current apps</span></span>
-<span id="cb6-10"><a href="#cb6-10"></a>gr.close_all()</span>
-<span id="cb6-11"><a href="#cb6-11"></a></span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="co"># Start of the app</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a>demo <span class="op">=</span> gr.Interface(</span>
-<span id="cb6-14"><a href="#cb6-14"></a>    fn<span class="op">=</span>summarize,</span>
-<span id="cb6-15"><a href="#cb6-15"></a>    inputs<span class="op">=</span><span class="st">"text"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16"></a>    outputs<span class="op">=</span><span class="st">"text"</span>,</span>
-<span id="cb6-17"><a href="#cb6-17"></a>    examples<span class="op">=</span>[<span class="st">"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface"</span>]</span>
-<span id="cb6-18"><a href="#cb6-18"></a>)</span>
-<span id="cb6-19"><a href="#cb6-19"></a></span>
-<span id="cb6-20"><a href="#cb6-20"></a>demo.launch(share<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">def</span> captioner(<span class="bu">input</span>):</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    result <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="cf">return</span> result[<span class="dv">0</span>][<span class="st">'generated_text'</span>]</span>
+<span id="cb6-4"><a href="#cb6-4"></a></span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a>gr.close_all()</span>
+<span id="cb6-7"><a href="#cb6-7"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>captioner,</span>
+<span id="cb6-8"><a href="#cb6-8"></a>                    inputs<span class="op">=</span>[gr.Image(label<span class="op">=</span><span class="st">"Upload image"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"pil"</span>)],</span>
+<span id="cb6-9"><a href="#cb6-9"></a>                    outputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Caption"</span>)],</span>
+<span id="cb6-10"><a href="#cb6-10"></a>                    title<span class="op">=</span><span class="st">"Image Captioning with BLIP"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11"></a>                    description<span class="op">=</span><span class="st">"Caption any image using the BLIP model"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>                    <span class="co"># examples=["your_image.jpeg", "your_image_2.jpeg"]</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>                    )</span>
+<span id="cb6-15"><a href="#cb6-15"></a></span>
+<span id="cb6-16"><a href="#cb6-16"></a></span>
+<span id="cb6-17"><a href="#cb6-17"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="gradio-interface" class="slide level2">
 <h2>Gradio interface</h2>
 
-<img data-src="../images/gradio_app_1.png" class="r-stretch"></section>
-<section id="gradio-with-text-input" class="slide level2">
-<h2>Gradio with text input</h2>
-
-<img data-src="../images/gradio_app_2.png" class="r-stretch"></section>
-<section id="gradio-with-output" class="slide level2">
-<h2>Gradio with output</h2>
-
-<img data-src="../images/gradio_app_3.png" class="r-stretch"></section>
-<section id="extended-gradio-app-code" class="slide level2 smaller">
-<h2>Extended Gradio app code</h2>
-<ul>
-<li class="fragment">We include more text in the user interface</li>
-<li class="fragment"><code>demo.launch(share=True)</code> creates a public link to share the app.</li>
-</ul>
-<div class="fragment">
-<div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb7-2"><a href="#cb7-2"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb7-3"><a href="#cb7-3"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb7-4"><a href="#cb7-4"></a></span>
-<span id="cb7-5"><a href="#cb7-5"></a></span>
-<span id="cb7-6"><a href="#cb7-6"></a>gr.close_all()</span>
-<span id="cb7-7"><a href="#cb7-7"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>summarize,</span>
-<span id="cb7-8"><a href="#cb7-8"></a>                    inputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Text to summarize"</span>, lines<span class="op">=</span><span class="dv">6</span>)],</span>
-<span id="cb7-9"><a href="#cb7-9"></a>                    outputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Result"</span>, lines<span class="op">=</span><span class="dv">3</span>)],</span>
-<span id="cb7-10"><a href="#cb7-10"></a>                    title<span class="op">=</span><span class="st">"Text summarization with distilbart-cnn"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11"></a>                    description<span class="op">=</span><span class="st">"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!"</span></span>
-<span id="cb7-12"><a href="#cb7-12"></a>                    )</span>
-<span id="cb7-13"><a href="#cb7-13"></a></span>
-<span id="cb7-14"><a href="#cb7-14"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-15"><a href="#cb7-15"></a></span>
-<span id="cb7-16"><a href="#cb7-16"></a><span class="co"># API-Version</span></span>
-<span id="cb7-17"><a href="#cb7-17"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT2']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</section>
-<section id="extended-gradio-output" class="slide level2">
-<h2>Extended Gradio output</h2>
-
-<img data-src="../images/gradio_app_4.png" class="r-stretch"></section></section>
-<section>
-<section id="named-entity-recognition-app" class="title-slide slide level1 center">
-<h1>Named Entity Recognition App</h1>
-<p>Building a Named Entity Recognition app</p>
-</section>
-<section id="what-is-entity-recognition" class="slide level2">
-<h2>What is entity recognition?</h2>
-<ul>
-<li class="fragment"><p>Named entity recognition (NER): Find the entities (such as persons, locations, or organizations) in a sentence.</p></li>
-<li class="fragment"><p>This can be formulated as attributing a label to each token by having one class per entity and one class for “no entity.”</p></li>
-</ul>
-</section>
-<section id="helper-function-named-entity-recognition-pipeline" class="slide level2">
-<h2>Helper function: Named entity recognition pipeline</h2>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>get_completion <span class="op">=</span> pipeline(<span class="st">"ner"</span>, model<span class="op">=</span><span class="st">"dslim/bert-base-NER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="api-version-1" class="slide level2">
-<h2>API-Version</h2>
-<ul>
-<li class="fragment">If you want to use the <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for <code>dslim/bert-base-NER</code>, a 108M parameter fine-tuned BART model on the NER task:</li>
-</ul>
-<div class="fragment">
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="co"># get_completion(text, parameters=None, ENDPOINT_URL= API_URL)</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co"># API-Version</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co"># def ner(input):</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#     return {"text": input, "entities": output}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</section>
-<section id="gradio-ner-app" class="slide level2 smaller">
-<h2>Gradio NER App</h2>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
-<span id="cb10-2"><a href="#cb10-2"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb10-3"><a href="#cb10-3"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: output}</span>
-<span id="cb10-4"><a href="#cb10-4"></a></span>
-<span id="cb10-5"><a href="#cb10-5"></a></span>
-<span id="cb10-6"><a href="#cb10-6"></a>gr.close_all()</span>
-<span id="cb10-7"><a href="#cb10-7"></a></span>
-<span id="cb10-8"><a href="#cb10-8"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
-<span id="cb10-9"><a href="#cb10-9"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
-<span id="cb10-10"><a href="#cb10-10"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
-<span id="cb10-11"><a href="#cb10-11"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
-<span id="cb10-12"><a href="#cb10-12"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
-<span id="cb10-13"><a href="#cb10-13"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
-<span id="cb10-14"><a href="#cb10-14"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
-<span id="cb10-15"><a href="#cb10-15"></a>                    <span class="co"># Here we introduce a new tag, examples, easy to use examples for your application</span></span>
-<span id="cb10-16"><a href="#cb10-16"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina and I study at HdM Stuttgart"</span>])</span>
-<span id="cb10-17"><a href="#cb10-17"></a></span>
-<span id="cb10-18"><a href="#cb10-18"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-19"><a href="#cb10-19"></a></span>
-<span id="cb10-20"><a href="#cb10-20"></a><span class="co"># API-Version</span></span>
-<span id="cb10-21"><a href="#cb10-21"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT3']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="app-interface" class="slide level2">
-<h2>App interface</h2>
-
-<img data-src="../images/gradio_app_5.png" class="r-stretch"></section>
-<section id="app-with-output" class="slide level2">
-<h2>App with output</h2>
-
-<img data-src="../images/gradio_app_6.png" class="r-stretch"></section>
-<section id="gradio-ner-app-with-merged-tokens" class="slide level2">
-<h2>Gradio NER app with merged tokens</h2>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">def</span> merge_tokens(tokens):</span>
-<span id="cb11-2"><a href="#cb11-2"></a>    merged_tokens <span class="op">=</span> []</span>
-<span id="cb11-3"><a href="#cb11-3"></a>    <span class="cf">for</span> token <span class="kw">in</span> tokens:</span>
-<span id="cb11-4"><a href="#cb11-4"></a>        <span class="cf">if</span> merged_tokens <span class="kw">and</span> token[<span class="st">'entity'</span>].startswith(<span class="st">'I-'</span>) <span class="kw">and</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>][<span class="st">'entity'</span>].endswith(token[<span class="st">'entity'</span>][<span class="dv">2</span>:]):</span>
-<span id="cb11-5"><a href="#cb11-5"></a>            <span class="co"># If current token continues the entity of the last one, merge them</span></span>
-<span id="cb11-6"><a href="#cb11-6"></a>            last_token <span class="op">=</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb11-7"><a href="#cb11-7"></a>            last_token[<span class="st">'word'</span>] <span class="op">+=</span> token[<span class="st">'word'</span>].replace(<span class="st">'##'</span>, <span class="st">''</span>)</span>
-<span id="cb11-8"><a href="#cb11-8"></a>            last_token[<span class="st">'end'</span>] <span class="op">=</span> token[<span class="st">'end'</span>]</span>
-<span id="cb11-9"><a href="#cb11-9"></a>            last_token[<span class="st">'score'</span>] <span class="op">=</span> (last_token[<span class="st">'score'</span>] <span class="op">+</span> token[<span class="st">'score'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb11-10"><a href="#cb11-10"></a>        <span class="cf">else</span>:</span>
-<span id="cb11-11"><a href="#cb11-11"></a>            <span class="co"># Otherwise, add the token to the list</span></span>
-<span id="cb11-12"><a href="#cb11-12"></a>            merged_tokens.append(token)</span>
-<span id="cb11-13"><a href="#cb11-13"></a></span>
-<span id="cb11-14"><a href="#cb11-14"></a>    <span class="cf">return</span> merged_tokens</span>
-<span id="cb11-15"><a href="#cb11-15"></a></span>
-<span id="cb11-16"><a href="#cb11-16"></a></span>
-<span id="cb11-17"><a href="#cb11-17"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
-<span id="cb11-18"><a href="#cb11-18"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb11-19"><a href="#cb11-19"></a>    merged_tokens <span class="op">=</span> merge_tokens(output)</span>
-<span id="cb11-20"><a href="#cb11-20"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: merged_tokens}</span>
-<span id="cb11-21"><a href="#cb11-21"></a></span>
-<span id="cb11-22"><a href="#cb11-22"></a></span>
-<span id="cb11-23"><a href="#cb11-23"></a>gr.close_all()</span>
-<span id="cb11-24"><a href="#cb11-24"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
-<span id="cb11-25"><a href="#cb11-25"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
-<span id="cb11-26"><a href="#cb11-26"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
-<span id="cb11-27"><a href="#cb11-27"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
-<span id="cb11-28"><a href="#cb11-28"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
-<span id="cb11-29"><a href="#cb11-29"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
-<span id="cb11-30"><a href="#cb11-30"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
-<span id="cb11-31"><a href="#cb11-31"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina, I live in Stuttgart and study at HdM Stuttgart"</span>])</span>
-<span id="cb11-32"><a href="#cb11-32"></a></span>
-<span id="cb11-33"><a href="#cb11-33"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb11-34"><a href="#cb11-34"></a></span>
-<span id="cb11-35"><a href="#cb11-35"></a><span class="co"># API-Version</span></span>
-<span id="cb11-36"><a href="#cb11-36"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT4']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
+<img data-src="../images/image_app_1.png" class="r-stretch"></section>
 <section id="gradio-output" class="slide level2">
 <h2>Gradio output</h2>
 
-<img data-src="../images/gradio_app_7.png" class="r-stretch"></section>
-<section id="close-all-apps" class="slide level2">
-<h2>Close all apps</h2>
-<div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>gr.close_all()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<img data-src="../images/image_app_2.png" class="r-stretch"></section>
+<section id="api-version-optional" class="slide level2">
+<h2>API version (optional)</h2>
+<ul>
+<li class="fragment">Optional: Use this code if you want to use the API</li>
+</ul>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># converts image to base 64 format (required for API)</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="kw">def</span> image_to_base64_str(pil_image):</span>
+<span id="cb7-5"><a href="#cb7-5"></a>    byte_arr <span class="op">=</span> io.BytesIO()</span>
+<span id="cb7-6"><a href="#cb7-6"></a>    pil_image.save(byte_arr, <span class="bu">format</span><span class="op">=</span><span class="st">'PNG'</span>)</span>
+<span id="cb7-7"><a href="#cb7-7"></a>    byte_arr <span class="op">=</span> byte_arr.getvalue()</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    <span class="cf">return</span> <span class="bu">str</span>(base64.b64encode(byte_arr).decode(<span class="st">'utf-8'</span>))</span>
+<span id="cb7-9"><a href="#cb7-9"></a></span>
+<span id="cb7-10"><a href="#cb7-10"></a></span>
+<span id="cb7-11"><a href="#cb7-11"></a><span class="kw">def</span> captioner(image):</span>
+<span id="cb7-12"><a href="#cb7-12"></a>    base64_image <span class="op">=</span> image_to_base64_str(image)</span>
+<span id="cb7-13"><a href="#cb7-13"></a>    result <span class="op">=</span> get_completion(base64_image)</span>
+<span id="cb7-14"><a href="#cb7-14"></a>    <span class="cf">return</span> result[<span class="dv">0</span>][<span class="st">'generated_text'</span>]</span>
+<span id="cb7-15"><a href="#cb7-15"></a></span>
+<span id="cb7-16"><a href="#cb7-16"></a></span>
+<span id="cb7-17"><a href="#cb7-17"></a>gr.close_all()</span>
+<span id="cb7-18"><a href="#cb7-18"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>captioner,</span>
+<span id="cb7-19"><a href="#cb7-19"></a>                    inputs<span class="op">=</span>[gr.Image(label<span class="op">=</span><span class="st">"Upload image"</span>, <span class="bu">type</span><span class="op">=</span><span class="st">"pil"</span>)],</span>
+<span id="cb7-20"><a href="#cb7-20"></a>                    outputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Caption"</span>)],</span>
+<span id="cb7-21"><a href="#cb7-21"></a>                    title<span class="op">=</span><span class="st">"Image Captioning with BLIP"</span>,</span>
+<span id="cb7-22"><a href="#cb7-22"></a>                    description<span class="op">=</span><span class="st">"Caption any image using the BLIP model"</span>,</span>
+<span id="cb7-23"><a href="#cb7-23"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a>                    <span class="co"># examples=["christmas_dog.jpeg", "bird_flight.jpeg", "cow.jpeg"]</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a>                    )</span>
+<span id="cb7-26"><a href="#cb7-26"></a></span>
+<span id="cb7-27"><a href="#cb7-27"></a></span>
+<span id="cb7-28"><a href="#cb7-28"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>, server_port<span class="op">=</span><span class="bu">int</span>(os.environ[<span class="st">'PORT1'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="close-all-connections" class="slide level2">
+<h2>Close all connections</h2>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>gr.close_all()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section></section>
 <section id="whats-next" class="title-slide slide level1 center" data-background-image="../images/logo.png" data-background-opacity="0.5">
