@@ -1,0 +1,357 @@
+---
+title: Simple Gradio NLP Apps
+title-slide-attributes:
+  data-background-image: ../images/logo.png
+  data-background-size: contain
+  data-background-opacity: "0.5"
+lang: en
+subtitle: Tutorial 6
+author: Jan Kirenz
+execute:
+  eval: true
+  echo: true
+highlight-style: github
+format:
+  revealjs: 
+    toc: true
+    toc-depth: 1
+    embed-resources: false
+    theme: [dark, ../custom.scss]  
+    incremental: true
+    transition: slide
+    background-transition: fade
+    transition-speed: slow
+    code-copy: true
+    code-line-numbers: true
+    smaller: false
+    scrollable: true
+    slide-number: c
+    preview-links: auto
+    chalkboard: 
+      buttons: false
+   # logo: ../images/logo.png
+    footer: Jan Kirenz
+---
+
+# NLP apps with a simple Gradio interface  
+
+
+# Setup
+
+## Python
+
+```{python}
+import gradio as gr
+from transformers import pipeline
+import os
+import io
+from IPython.display import Image, display, HTML
+from PIL import Image
+import base64
+from dotenv import load_dotenv, find_dotenv
+_ = load_dotenv(find_dotenv())  # read local .env file
+
+hf_api_key = os.environ['HF_API_KEY']  # HuggingFace API
+```
+
+
+# Text Summarization App
+
+Building a text summarization app
+
+## Text summarization
+
+- To learn more about text summarization, take a look at [this tutorial](https://kirenz.github.io/huggingface/text-summarization/summarization-pipeline#/title-slide)
+
+
+## Helper function: summarization pipeline
+
+```{python}
+
+get_completion = pipeline(
+    "summarization", model="sshleifer/distilbart-cnn-12-6")
+
+
+```
+
+## API-version {.smaller}
+
+- The code would look very similar if you were running it from an API instead of locally. 
+
+- The same is true for all the tutorials in the rest of the course, make sure to check the [Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) documentation page
+
+## API code
+
+- In our example: to run it via API, you could use an [Inference Endpoint](https://huggingface.co/inference-endpoints) for the `sshleifer/distilbart-cnn-12-6`, a 306M parameter distilled model from `facebook/bart-large-cnn`. 
+
+. . .
+
+```{python}
+# # Helper function
+# import requests, json
+
+
+# #Summarization endpoint
+# def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):
+#     headers = {
+#       "Authorization": f"Bearer {hf_api_key}",
+#       "Content-Type": "application/json"
+#     }
+#     data = { "inputs": inputs }
+#     if parameters is not None:
+#         data.update({"parameters": parameters})
+#     response = requests.request("POST",
+#                                 ENDPOINT_URL, headers=headers,
+#                                 data=json.dumps(data)
+#                                )
+#     return json.loads(response.content.decode("utf-8"))
+```
+
+
+
+## Text to summarize {.smaller}
+
+```{python}
+text = ('''One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface. The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. "text", "image" or "audio"); outputs: which component(s) to use for the output (e.g. "text", "image" or "label") ''')
+
+```
+
+
+## Summarization example {.smaller}
+
+```{python}
+# | output-location: slide
+
+
+def summarize(input):
+    output = get_completion(input)
+    return output[0]['summary_text']
+
+
+summarize(text)
+
+```
+
+## Gradio app code {.smaller}
+
+- Getting started with Gradio `gr.Interface` 
+- If you want to use the API-version, replace `demo.launch(share=False)` with `demo.launch(share=True, server_port=int(os.environ['PORT1']))`
+
+. . .
+
+```{python}
+# | eval: false
+
+# Helper function
+
+
+def summarize(input):
+    output = get_completion(input)
+    return output[0]['summary_text']
+
+
+# Close all current apps
+gr.close_all()
+
+# Start of the app
+demo = gr.Interface(
+    fn=summarize,
+    inputs="text",
+    outputs="text",
+    examples=["One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface"]
+)
+
+demo.launch(share=False)
+
+```
+
+## Gradio interface
+
+![](/images/gradio_app_1.png)
+
+
+## Gradio with text input
+
+![](/images/gradio_app_2.png)
+
+
+
+## Gradio with output
+
+![](/images/gradio_app_3.png)
+
+
+## Extended Gradio app code {.smaller}
+
+- We include more text in the user interface
+- `demo.launch(share=True)` creates a public link to share the app.
+
+. . . 
+
+```{python}
+# | eval: false
+
+
+def summarize(input):
+    output = get_completion(input)
+    return output[0]['summary_text']
+
+
+gr.close_all()
+demo = gr.Interface(fn=summarize,
+                    inputs=[gr.Textbox(label="Text to summarize", lines=6)],
+                    outputs=[gr.Textbox(label="Result", lines=3)],
+                    title="Text summarization with distilbart-cnn",
+                    description="Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!"
+                    )
+
+demo.launch(share=True)
+
+# API-Version
+# demo.launch(share=True, server_port=int(os.environ['PORT2']))
+```
+
+
+## Extended Gradio output
+
+![](/images/gradio_app_4.png)
+
+
+# Named Entity Recognition App
+
+Building a Named Entity Recognition app
+
+## What is entity recognition?
+
+- Named entity recognition (NER): Find the entities (such as persons, locations, or organizations) in a sentence. 
+
+- This can be formulated as attributing a label to each token by having one class per entity and one class for “no entity.”
+
+## Helper function: Named entity recognition pipeline
+
+
+```{python}
+
+get_completion = pipeline("ner", model="dslim/bert-base-NER")
+
+
+```
+
+## API-Version
+
+- If you want to use the [Inference Endpoint](https://huggingface.co/inference-endpoints) for `dslim/bert-base-NER`, a 108M parameter fine-tuned BART model on the NER task:
+
+. . .
+
+```{python}
+# API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint
+# get_completion(text, parameters=None, ENDPOINT_URL= API_URL)
+
+# API-Version
+# def ner(input):
+#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)
+#     return {"text": input, "entities": output}
+```
+
+
+## Gradio NER App {.smaller}
+
+```{python}
+# | eval: false
+
+def ner(input):
+    output = get_completion(input)
+    return {"text": input, "entities": output}
+
+
+gr.close_all()
+
+demo = gr.Interface(fn=ner,
+                    inputs=[gr.Textbox(
+                        label="Text to find entities", lines=2)],
+                    outputs=[gr.HighlightedText(label="Text with entities")],
+                    title="NER with dslim/bert-base-NER",
+                    description="Find entities using the `dslim/bert-base-NER` model under the hood!",
+                    allow_flagging="never",
+                    # Here we introduce a new tag, examples, easy to use examples for your application
+                    examples=["My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart", "My name is Lina and I study at HdM Stuttgart"])
+
+demo.launch(share=True)
+
+# API-Version
+# demo.launch(share=True, server_port=int(os.environ['PORT3']))
+```
+
+
+## App interface
+
+![](/images/gradio_app_5.png)
+
+## App with output
+
+![](/images/gradio_app_6.png)
+
+
+
+## Gradio NER app with merged tokens
+
+```{python}
+# | eval: false
+
+
+def merge_tokens(tokens):
+    merged_tokens = []
+    for token in tokens:
+        if merged_tokens and token['entity'].startswith('I-') and merged_tokens[-1]['entity'].endswith(token['entity'][2:]):
+            # If current token continues the entity of the last one, merge them
+            last_token = merged_tokens[-1]
+            last_token['word'] += token['word'].replace('##', '')
+            last_token['end'] = token['end']
+            last_token['score'] = (last_token['score'] + token['score']) / 2
+        else:
+            # Otherwise, add the token to the list
+            merged_tokens.append(token)
+
+    return merged_tokens
+
+
+def ner(input):
+    output = get_completion(input)
+    merged_tokens = merge_tokens(output)
+    return {"text": input, "entities": merged_tokens}
+
+
+gr.close_all()
+demo = gr.Interface(fn=ner,
+                    inputs=[gr.Textbox(
+                        label="Text to find entities", lines=2)],
+                    outputs=[gr.HighlightedText(label="Text with entities")],
+                    title="NER with dslim/bert-base-NER",
+                    description="Find entities using the `dslim/bert-base-NER` model under the hood!",
+                    allow_flagging="never",
+                    examples=["My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart", "My name is Lina, I live in Stuttgart and study at HdM Stuttgart"])
+
+demo.launch(share=True)
+
+# API-Version
+# demo.launch(share=True, server_port=int(os.environ['PORT4']))
+```
+
+
+## Gradio output
+
+![](/images/gradio_app_7.png)
+
+## Close all apps
+
+```{python}
+gr.close_all()
+```
+
+
+# What's next? {background-image="../images/logo.png" background-opacity="0.5"}
+
+**Congratulations! You have completed this tutorial** 👍
+
+
+**Next, you may want to go back to the [lab's website](https://kirenz.github.io/lab-llm-gradio/)**
