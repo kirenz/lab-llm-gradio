@@ -1,0 +1,16 @@
+pandas
+openpyxl
+ipykernel
+notebook
+jupyterlab
+openai
+python-dotenv
+redlines
+panel
+jupyter_bokeh
+tiktoken
+utils
+gradio
+"transformers[torch]"
+"diffusers[torch]"
+text-generation
