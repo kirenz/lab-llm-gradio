@@ -1,0 +1,5 @@
+#!/Users/jankirenz/labs/lab-llm-gradio/slides/env/env/bin/python3.11
+
+from idlelib.pyshell import main
+if __name__ == '__main__':
+    main()
