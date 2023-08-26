@@ -468,8 +468,8 @@ Jan Kirenz
 <li class="fragment"><p>The same is true for all the tutorials in the rest of the course, make sure to check the <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">Pipelines</a> documentation page</p></li>
 </ul>
 </section>
-<section id="api-code" class="slide level2">
-<h2>API code</h2>
+<section id="api-code-optional" class="slide level2">
+<h2>API code (optional)</h2>
 <ul>
 <li class="fragment">In our example: to run it via API, you could use an <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for the <code>sshleifer/distilbart-cnn-12-6</code>, a 306M parameter distilled model from <code>facebook/bart-large-cnn</code>.</li>
 </ul>
@@ -512,11 +512,11 @@ Jan Kirenz
 <span id="cb5-5"><a href="#cb5-5"></a></span>
 <span id="cb5-6"><a href="#cb5-6"></a>summarize(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
+<ul>
+<li class="fragment">’ Gradio allows you to build demos and share them in just a few lines of code . The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g.&nbsp;“text”, “image” or “audio) or”label”)’</li>
+</ul>
 </section>
-<section id="summarization-example-output" class="slide level2 smaller output-location-slide"><h2>Summarization example</h2><div class="cell output-location-slide" data-execution_count="5">
-
-</div></section><section id="gradio-app-code" class="slide level2 smaller">
+<section id="gradio-app-code" class="slide level2 smaller">
 <h2>Gradio app code</h2>
 <ul>
 <li class="fragment">Getting started with Gradio <code>gr.Interface</code></li>
