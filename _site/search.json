@@ -243,5 +243,201 @@
     "title": "Gradio NLP Apps",
     "section": "API code (optional)",
     "text": "API code (optional)\n\nIn our example: to run it via API, you could use an Inference Endpoint for the sshleifer/distilbart-cnn-12-6, a 306M parameter distilled model from facebook/bart-large-cnn.\n\n\n\n# # Helper function\n# import requests, json\n\n\n# #Summarization endpoint\n# def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL, headers=headers,\n#                                 data=json.dumps(data)\n#                                )\n#     return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html",
+    "href": "slides/3_image_generation_app.html",
+    "title": "L3: Image generation app",
+    "section": "",
+    "text": "Load your HF API key and relevant Python libraries\nimport os\nimport io\nimport IPython.display\nfrom PIL import Image\nimport base64 \nimport gradio as gr \nimport json\nfrom diffusers import DiffusionPipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv()) # read local .env file\nhf_api_key = os.environ['HF_API_KEY']"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#load-model",
+    "href": "slides/3_image_generation_app.html#load-model",
+    "title": "L3: Image generation app",
+    "section": "Load model",
+    "text": "Load model\nIn this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2). You’ll find the Windows and Apple Intel version below\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n`text_config_dict` is provided which will be used to initialize `CLIPTextConfig`. The value `text_config[\"id2label\"]` will be overriden.\n`text_config_dict` is provided which will be used to initialize `CLIPTextConfig`. The value `text_config[\"bos_token_id\"]` will be overriden.\n`text_config_dict` is provided which will be used to initialize `CLIPTextConfig`. The value `text_config[\"eos_token_id\"]` will be overriden.\n\n\nApple Intel and Windows version:\n\n#pipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\n#def get_completion(prompt):\n#    return pipe(prompt).images[0]  \n\nOptional: API-version\n\n# Helper function\nimport requests, json\n\n#Text-to-image endpoint\ndef get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_TTI_BASE']):\n    headers = {\n      \"Authorization\": f\"Bearer {hf_api_key}\",\n      \"Content-Type\": \"application/json\"\n    }   \n    data = { \"inputs\": inputs }\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = requests.request(\"POST\",\n                                ENDPOINT_URL,\n                                headers=headers,\n                                data=json.dumps(data))\n    return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#building-an-image-generation-app",
+    "href": "slides/3_image_generation_app.html#building-an-image-generation-app",
+    "title": "L3: Image generation app",
+    "section": "Building an image generation app",
+    "text": "Building an image generation app\nHere we are going to run runwayml/stable-diffusion-v1-5 using the 🧨 diffusers library.\n\nprompt = \"a dog in a park\"\n\nresult = get_completion(prompt)\nresult\n\n\n\n\n\n\n\n\nresult\n\n\n\n\na red jeep driving through a ruin. in a realistic style\na dog in a park"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#generating-with-gr.interface",
+    "href": "slides/3_image_generation_app.html#generating-with-gr.interface",
+    "title": "Gradio Image Creation App",
+    "section": "Generating with gr.Interface()",
+    "text": "Generating with gr.Interface()\n\ndef generate(inputs):\n    output = get_completion(inputs)\n    return output\n\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[gr.Textbox(label=\"Your prompt\")],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\",\n                    examples=[\n                        \"a scary cyborg wandering in the city of Stuttgart\", \"a red Jeep in a swimming pool\"]\n                    )\n\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#building-a-more-advanced-interface",
+    "href": "slides/3_image_generation_app.html#building-a-more-advanced-interface",
+    "title": "L3: Image generation app",
+    "section": "Building a more advanced interface",
+    "text": "Building a more advanced interface\nNote: The following code for the local app mimics the code of the API-version as close as possible. Therefore, some of the code may be not necessary.\n\ndef get_completion(inputs, parameters=None):\n    data = { \"inputs\": inputs }\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = json.dumps(data)\n    return pipe(response).images[0]  \n\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n    \n    output = get_completion(prompt, params)\n    return output\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                 info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7, \n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=False)\n\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nRunning on local URL:  http://127.0.0.1:7860\n\nTo create a public link, set `share=True` in `launch()`.\n\n\n\n\n\n\n\n\n\n\n\nOptional: API-version:\n\n#A helper function to convert the PIL image to base64 \n# so you can send it to the API\ndef base64_to_pil(img_base64):\n    base64_decoded = base64.b64decode(img_base64)\n    byte_stream = io.BytesIO(base64_decoded)\n    pil_image = Image.open(byte_stream)\n    return pil_image\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n    \n    output = get_completion(prompt, params)\n    pil_image = base64_to_pil(output)\n    return pil_image\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                 info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7, \n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=True, server_port=int(os.environ['PORT2']))\n\ndemo.close()"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-blocks",
+    "href": "slides/3_image_generation_app.html#gradio-blocks",
+    "title": "L3: Image generation app",
+    "section": "Gradio Blocks",
+    "text": "Gradio Blocks\ngr.Blocks() to the rescue!\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\ngr.close_all()\ndemo.launch(share=False)\n\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nRunning on local URL:  http://127.0.0.1:7860\nRunning on public URL: https://9f9d2520d3b76ef0cb.gradio.live\n\nThis share link expires in 72 hours. For free permanent hosting and GPU upgrades, run `gradio deploy` from Terminal to deploy to Spaces (https://huggingface.co/spaces)\n\n\nReadTimeout: HTTPSConnectionPool(host='9f9d2520d3b76ef0cb.gradio.live', port=443): Read timed out. (read timeout=3)\n\n\nAPI Version\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT3']))\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            prompt = gr.Textbox(label=\"Your prompt\") #Give prompt some real estate\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\") #Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False): #Let's hide the advanced options!\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            with gr.Row():\n                with gr.Column():\n                    steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n                    guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n                with gr.Column():\n                    width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n                    height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\") #Move the output up too\n            \n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=False)\n\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nRunning on local URL:  http://127.0.0.1:7861\n\nTo create a public link, set `share=True` in `launch()`.\n\n\n\n\n\n\n\n\nAPI Version:\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            prompt = gr.Textbox(label=\"Your prompt\") #Give prompt some real estate\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\") #Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False): #Let's hide the advanced options!\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            with gr.Row():\n                with gr.Column():\n                    steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n                    guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n                with gr.Column():\n                    width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n                    height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\") #Move the output up too\n            \n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT4']))\n\ngr.close_all()\n\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860\nClosing server running on port: 7860"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#python",
+    "href": "slides/3_image_generation_app.html#python",
+    "title": "Gradio Image Creation App",
+    "section": "Python",
+    "text": "Python\nLoad your HF API key and relevant Python libraries\n\nimport os\nimport io\nimport IPython.display\nfrom PIL import Image\nimport base64\nimport gradio as gr\nimport json\nfrom diffusers import DiffusionPipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\nhf_api_key = os.environ['HF_API_KEY']"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#load-model-only-apple-silicon",
+    "href": "slides/3_image_generation_app.html#load-model-only-apple-silicon",
+    "title": "Gradio Image Creation App",
+    "section": "Load model (only Apple Silicon)",
+    "text": "Load model (only Apple Silicon)\n\nIn this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).\nYou’ll find the Windows and Apple Intel version below\n\n\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#load-model-only-apple-intel-and-windows",
+    "href": "slides/3_image_generation_app.html#load-model-only-apple-intel-and-windows",
+    "title": "Gradio Image Creation App",
+    "section": "Load Model (only Apple Intel and Windows)",
+    "text": "Load Model (only Apple Intel and Windows)\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#optional-api-version",
+    "href": "slides/3_image_generation_app.html#optional-api-version",
+    "title": "Gradio Image Creation App",
+    "section": "Optional: API-version",
+    "text": "Optional: API-version\n\nOnly use this code if you want to use the API\n\n\n# Helper function\nimport requests, json\n\n#Text-to-image endpoint\ndef get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_TTI_BASE']):\n    headers = {\n      \"Authorization\": f\"Bearer {hf_api_key}\",\n      \"Content-Type\": \"application/json\"\n    }   \n    data = { \"inputs\": inputs }\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = requests.request(\"POST\",\n                                ENDPOINT_URL,\n                                headers=headers,\n                                data=json.dumps(data))\n    return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#example-prompt",
+    "href": "slides/3_image_generation_app.html#example-prompt",
+    "title": "Gradio Image Creation App",
+    "section": "Example prompt",
+    "text": "Example prompt\n\nHere we are going to run runwayml/stable-diffusion-v1-5 using the 🧨 diffusers library.\n\n\nprompt = \"a dog in a park\""
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#result",
+    "href": "slides/3_image_generation_app.html#result",
+    "title": "Gradio Image Creation App",
+    "section": "Result",
+    "text": "Result\n\nresult = get_completion(prompt)\nresult"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-user-interface",
+    "href": "slides/3_image_generation_app.html#gradio-user-interface",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#output",
+    "href": "slides/3_image_generation_app.html#output",
+    "title": "Gradio Image Creation App",
+    "section": "Output",
+    "text": "Output"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#optional-api-version-1",
+    "href": "slides/3_image_generation_app.html#optional-api-version-1",
+    "title": "Gradio Image Creation App",
+    "section": "Optional: API-Version",
+    "text": "Optional: API-Version\nimport gradio as gr \n\n#A helper function to convert the PIL image to base64\n#so you can send it to the API\ndef base64_to_pil(img_base64):\n    base64_decoded = base64.b64decode(img_base64)\n    byte_stream = io.BytesIO(base64_decoded)\n    pil_image = Image.open(byte_stream)\n    return pil_image\n\ndef generate(prompt):\n    output = get_completion(prompt)\n    result_image = base64_to_pil(output)\n    return result_image\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[gr.Textbox(label=\"Your prompt\")],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\",\n                    examples=[\"the spirit of a tamagotchi wandering in the city of Vienna\",\"a mecha robot in a favela\"])\n\ndemo.launch(share=True, server_port=int(os.environ['PORT1']))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#close-apps",
+    "href": "slides/3_image_generation_app.html#close-apps",
+    "title": "Gradio Image Creation App",
+    "section": "Close apps",
+    "text": "Close apps\n\ndemo.close()"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-app",
+    "href": "slides/3_image_generation_app.html#gradio-app",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio app",
+    "text": "Gradio app\nNote: The following code for the local app mimics the code of the API-version as close as possible.\n\ndef get_completion(inputs, parameters=None):\n    data = {\"inputs\": inputs}\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = json.dumps(data)\n    return pipe(response).images[0]\n\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n\n    output = get_completion(prompt, params)\n    return output\n\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                  info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64,\n                                  maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64,\n                                  maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-user-interface-1",
+    "href": "slides/3_image_generation_app.html#gradio-user-interface-1",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#model-output",
+    "href": "slides/3_image_generation_app.html#model-output",
+    "title": "Gradio Image Creation App",
+    "section": "Model output",
+    "text": "Model output\n\n🤔"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#optional-api-version-2",
+    "href": "slides/3_image_generation_app.html#optional-api-version-2",
+    "title": "Gradio Image Creation App",
+    "section": "Optional: API-version",
+    "text": "Optional: API-version\n\n#A helper function to convert the PIL image to base64 \n# so you can send it to the API\ndef base64_to_pil(img_base64):\n    base64_decoded = base64.b64decode(img_base64)\n    byte_stream = io.BytesIO(base64_decoded)\n    pil_image = Image.open(byte_stream)\n    return pil_image\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n    \n    output = get_completion(prompt, params)\n    pil_image = base64_to_pil(output)\n    return pil_image\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                 info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7, \n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=True, server_port=int(os.environ['PORT2']))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#close-apps-1",
+    "href": "slides/3_image_generation_app.html#close-apps-1",
+    "title": "Gradio Image Creation App",
+    "section": "Close apps",
+    "text": "Close apps\n\ndemo.close()"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-example-with-blocks",
+    "href": "slides/3_image_generation_app.html#gradio-example-with-blocks",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio example with Blocks",
+    "text": "Gradio example with Blocks\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                              info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                 info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64,\n                              maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64,\n                               maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[\n              prompt, negative_prompt, steps, guidance, width, height], outputs=[output])\ngr.close_all()\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-user-interface-2",
+    "href": "slides/3_image_generation_app.html#gradio-user-interface-2",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#optional-api-version-3",
+    "href": "slides/3_image_generation_app.html#optional-api-version-3",
+    "title": "Gradio Image Creation App",
+    "section": "Optional: API Version",
+    "text": "Optional: API Version\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT3']))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-app-with-drop-down-menu",
+    "href": "slides/3_image_generation_app.html#gradio-app-with-drop-down-menu",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio app with drop down menu",
+    "text": "Gradio app with drop down menu\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            # Give prompt some real estate\n            prompt = gr.Textbox(label=\"Your prompt\")\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\")  # Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False):  # Let's hide the advanced options!\n        negative_prompt = gr.Textbox(label=\"Negative prompt\")\n        with gr.Row():\n            with gr.Column():\n                steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                  info=\"In many steps will the denoiser denoise the image?\")\n                guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                     info=\"Controls how much the text prompt influences the result\")\n            with gr.Column():\n                width = gr.Slider(label=\"Width\", minimum=64,\n                                  maximum=512, step=64, value=512)\n                height = gr.Slider(label=\"Height\", minimum=64,\n                                   maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\")  # Move the output up too\n\n    btn.click(fn=generate, inputs=[\n              prompt, negative_prompt, steps, guidance, width, height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#gradio-user-interface-3",
+    "href": "slides/3_image_generation_app.html#gradio-user-interface-3",
+    "title": "Gradio Image Creation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#optional-api-version-4",
+    "href": "slides/3_image_generation_app.html#optional-api-version-4",
+    "title": "Gradio Image Creation App",
+    "section": "Optional: API Version",
+    "text": "Optional: API Version\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            prompt = gr.Textbox(label=\"Your prompt\") #Give prompt some real estate\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\") #Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False): #Let's hide the advanced options!\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            with gr.Row():\n                with gr.Column():\n                    steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n                    guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n                with gr.Column():\n                    width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n                    height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\") #Move the output up too\n            \n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT4']))"
+  },
+  {
+    "objectID": "slides/3_image_generation_app.html#close-all-apps",
+    "href": "slides/3_image_generation_app.html#close-all-apps",
+    "title": "Gradio Image Creation App",
+    "section": "Close all apps",
+    "text": "Close all apps\n\ngr.close_all()"
   }
 ]
