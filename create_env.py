@@ -1,28 +1,54 @@
 from pathlib import Path
 import subprocess
+import shutil
 
-# Setze den Pfad zum Zielordner
-target_folder = Path("slides/env")
+# Define the path to the "slides" folder as a relative path
+slides_path = Path("slides")
 
-# Erstelle den Ordner, falls er noch nicht existiert
-target_folder.mkdir(parents=True, exist_ok=True)
+# Check if the "slides" folder exists
+if slides_path.exists() and slides_path.is_dir():
 
-# Wechseln in den Ordner 'slides' und führen den 'conda' Befehl aus
-command = f"cd {target_folder.parent} && conda create --prefix env python"
+    # Run the conda command to create the environment with Python 3.11
+    try:
+        subprocess.run(
+            f"cd {slides_path.resolve()} && conda create --prefix ./env python=3.11 -y", shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error while running the conda command: {e}")
 
-# Führen den Befehl im Terminal aus
-subprocess.run(command, shell=True)
+    # Open a new Terminal window and activate the Conda environment
+    try:
+        osascript_command = f'''
+        tell application "Terminal"
+            do script "cd {slides_path.resolve()}; conda activate ./env"
+        end tell
+        '''
+        subprocess.run(["osascript", "-e", osascript_command])
+    except Exception as e:
+        print(f"Error while opening a new Terminal window: {e}")
+
+    # Move the "requirements.txt" file to the "env" folder
+    try:
+        shutil.move(str(slides_path / "requirements.txt"),
+                    str(slides_path / "env/requirements.txt"))
+    except FileNotFoundError:
+        print("requirements.txt not found. Skipping the move operation.")
+ #   except FileNotFoundError:
+ #       print(f"The folder {slides_path} does not exist or is not a directory.")
 
 
 ####################################
 # Nächste Schritte
 
-# Anaconda activate in Terminal
+# Alternativ:  activate in vs code
 # conda activate ./env
 
-# Installation der Module
+# Export pip
+# python3 -m pip freeze > requirements.txt
 
-# Export yml
+# Installation der Module
+# python3 -m pip install -r requirements.txt
+
+# Export anaconda yml
 # conda env export > environment.yml
 
 # Restore env

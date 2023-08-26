@@ -8,7 +8,7 @@ lang: en
 subtitle: Tutorial 6
 author: Jan Kirenz
 execute:
-  eval: true
+  eval: false
   echo: true
 highlight-style: github
 format:
