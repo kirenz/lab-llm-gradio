@@ -1,10 +1,178 @@
 [
   {
-    "objectID": "requirements.html",
-    "href": "requirements.html",
-    "title": "Requirements",
+    "objectID": "assignments.html",
+    "href": "assignments.html",
+    "title": "Assignments",
     "section": "",
-    "text": "To start this lab, you’ll need:\n\n\n\n\n\n\nImportant\n\n\n\nVisit the “Programming Toolkit-webpage” to learn how to meet all requirements.\n\n\n\nPython: Anaconda, Anaconda Environment gradio and Visual Studio Code\nEnvironment: A lab folder on your machine, an HuggingFace key and an environment file with your HuggingFace key"
+    "text": "tbd"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html",
+    "href": "code/3_image_generation_app.html",
+    "title": "Image Generation App",
+    "section": "",
+    "text": "Load your HF API key and relevant Python libraries\n\nimport os\nimport io\nimport IPython.display\nfrom PIL import Image\nimport base64\nimport gradio as gr\nimport json\nfrom diffusers import DiffusionPipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\nhf_api_key = os.environ['HF_API_KEY']\n\n\n\n\n\nIn this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).\nYou’ll find the Windows and Apple Intel version below\n\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]\n\n\n\n\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]\n\n\n\n\n\nOnly use this code if you want to use the API\n\n\n# Helper function\nimport requests, json\n\n#Text-to-image endpoint\ndef get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_TTI_BASE']):\n    headers = {\n      \"Authorization\": f\"Bearer {hf_api_key}\",\n      \"Content-Type\": \"application/json\"\n    }   \n    data = { \"inputs\": inputs }\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = requests.request(\"POST\",\n                                ENDPOINT_URL,\n                                headers=headers,\n                                data=json.dumps(data))\n    return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#python",
+    "href": "code/3_image_generation_app.html#python",
+    "title": "Image Generation App",
+    "section": "",
+    "text": "Load your HF API key and relevant Python libraries\n\nimport os\nimport io\nimport IPython.display\nfrom PIL import Image\nimport base64\nimport gradio as gr\nimport json\nfrom diffusers import DiffusionPipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\nhf_api_key = os.environ['HF_API_KEY']"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#load-model-only-apple-silicon",
+    "href": "code/3_image_generation_app.html#load-model-only-apple-silicon",
+    "title": "Image Generation App",
+    "section": "",
+    "text": "In this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).\nYou’ll find the Windows and Apple Intel version below\n\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#load-model-only-apple-intel-and-windows",
+    "href": "code/3_image_generation_app.html#load-model-only-apple-intel-and-windows",
+    "title": "Image Generation App",
+    "section": "",
+    "text": "pipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#optional-api-version",
+    "href": "code/3_image_generation_app.html#optional-api-version",
+    "title": "Image Generation App",
+    "section": "",
+    "text": "Only use this code if you want to use the API\n\n\n# Helper function\nimport requests, json\n\n#Text-to-image endpoint\ndef get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_TTI_BASE']):\n    headers = {\n      \"Authorization\": f\"Bearer {hf_api_key}\",\n      \"Content-Type\": \"application/json\"\n    }   \n    data = { \"inputs\": inputs }\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = requests.request(\"POST\",\n                                ENDPOINT_URL,\n                                headers=headers,\n                                data=json.dumps(data))\n    return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#example-prompt",
+    "href": "code/3_image_generation_app.html#example-prompt",
+    "title": "Image Generation App",
+    "section": "Example prompt",
+    "text": "Example prompt\n\nHere we are going to run runwayml/stable-diffusion-v1-5 using the 🧨 diffusers library.\n\nprompt = \"a dog in a park\""
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#result",
+    "href": "code/3_image_generation_app.html#result",
+    "title": "Image Generation App",
+    "section": "Result",
+    "text": "Result\n\nresult = get_completion(prompt)\nresult"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#generating-with-gr.interface",
+    "href": "code/3_image_generation_app.html#generating-with-gr.interface",
+    "title": "Image Generation App",
+    "section": "Generating with gr.Interface()",
+    "text": "Generating with gr.Interface()\n\ndef generate(inputs):\n    output = get_completion(inputs)\n    return output\n\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[gr.Textbox(label=\"Your prompt\")],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\",\n                    examples=[\n                        \"a scary cyborg wandering in the city of Stuttgart\", \"a red Jeep in a swimming pool\"]\n                    )\n\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-user-interface",
+    "href": "code/3_image_generation_app.html#gradio-user-interface",
+    "title": "Image Generation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#output",
+    "href": "code/3_image_generation_app.html#output",
+    "title": "Image Generation App",
+    "section": "Output",
+    "text": "Output"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#optional-api-version-1",
+    "href": "code/3_image_generation_app.html#optional-api-version-1",
+    "title": "Image Generation App",
+    "section": "Optional: API-Version",
+    "text": "Optional: API-Version\nimport gradio as gr \n\n#A helper function to convert the PIL image to base64\n#so you can send it to the API\ndef base64_to_pil(img_base64):\n    base64_decoded = base64.b64decode(img_base64)\n    byte_stream = io.BytesIO(base64_decoded)\n    pil_image = Image.open(byte_stream)\n    return pil_image\n\ndef generate(prompt):\n    output = get_completion(prompt)\n    result_image = base64_to_pil(output)\n    return result_image\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[gr.Textbox(label=\"Your prompt\")],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\",\n                    examples=[\"the spirit of a tamagotchi wandering in the city of Vienna\",\"a mecha robot in a favela\"])\n\ndemo.launch(share=True, server_port=int(os.environ['PORT1']))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#close-apps",
+    "href": "code/3_image_generation_app.html#close-apps",
+    "title": "Image Generation App",
+    "section": "Close apps",
+    "text": "Close apps\n\ndemo.close()"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-app",
+    "href": "code/3_image_generation_app.html#gradio-app",
+    "title": "Image Generation App",
+    "section": "Gradio app",
+    "text": "Gradio app\nNote: The following code for the local app mimics the code of the API-version as close as possible.\n\ndef get_completion(inputs, parameters=None):\n    data = {\"inputs\": inputs}\n    if parameters is not None:\n        data.update({\"parameters\": parameters})\n    response = json.dumps(data)\n    return pipe(response).images[0]\n\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n\n    output = get_completion(prompt, params)\n    return output\n\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                  info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64,\n                                  maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64,\n                                  maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-user-interface-1",
+    "href": "code/3_image_generation_app.html#gradio-user-interface-1",
+    "title": "Image Generation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#model-output",
+    "href": "code/3_image_generation_app.html#model-output",
+    "title": "Image Generation App",
+    "section": "Model output",
+    "text": "Model output\n\n🤔"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#optional-api-version-2",
+    "href": "code/3_image_generation_app.html#optional-api-version-2",
+    "title": "Image Generation App",
+    "section": "Optional: API-version",
+    "text": "Optional: API-version\n\n#A helper function to convert the PIL image to base64 \n# so you can send it to the API\ndef base64_to_pil(img_base64):\n    base64_decoded = base64.b64decode(img_base64)\n    byte_stream = io.BytesIO(base64_decoded)\n    pil_image = Image.open(byte_stream)\n    return pil_image\n\ndef generate(prompt, negative_prompt, steps, guidance, width, height):\n    params = {\n        \"negative_prompt\": negative_prompt,\n        \"num_inference_steps\": steps,\n        \"guidance_scale\": guidance,\n        \"width\": width,\n        \"height\": height\n    }\n    \n    output = get_completion(prompt, params)\n    pil_image = base64_to_pil(output)\n    return pil_image\n\ngr.close_all()\ndemo = gr.Interface(fn=generate,\n                    inputs=[\n                        gr.Textbox(label=\"Your prompt\"),\n                        gr.Textbox(label=\"Negative prompt\"),\n                        gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                 info=\"In how many steps will the denoiser denoise the image?\"),\n                        gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7, \n                                  info=\"Controls how much the text prompt influences the result\"),\n                        gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512),\n                        gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512),\n                    ],\n                    outputs=[gr.Image(label=\"Result\")],\n                    title=\"Image Generation with Stable Diffusion\",\n                    description=\"Generate any image with Stable Diffusion\",\n                    allow_flagging=\"never\"\n                    )\n\ndemo.launch(share=True, server_port=int(os.environ['PORT2']))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#close-apps-1",
+    "href": "code/3_image_generation_app.html#close-apps-1",
+    "title": "Image Generation App",
+    "section": "Close apps",
+    "text": "Close apps\n\ndemo.close()"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-example-with-blocks",
+    "href": "code/3_image_generation_app.html#gradio-example-with-blocks",
+    "title": "Image Generation App",
+    "section": "Gradio example with Blocks",
+    "text": "Gradio example with Blocks\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                              info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                 info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64,\n                              maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64,\n                               maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[\n              prompt, negative_prompt, steps, guidance, width, height], outputs=[output])\ngr.close_all()\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-user-interface-2",
+    "href": "code/3_image_generation_app.html#gradio-user-interface-2",
+    "title": "Image Generation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#optional-api-version-3",
+    "href": "code/3_image_generation_app.html#optional-api-version-3",
+    "title": "Image Generation App",
+    "section": "Optional: API Version",
+    "text": "Optional: API Version\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    prompt = gr.Textbox(label=\"Your prompt\")\n    with gr.Row():\n        with gr.Column():\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n            guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n            width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n            height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n            btn = gr.Button(\"Submit\")\n        with gr.Column():\n            output = gr.Image(label=\"Result\")\n\n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT3']))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-app-with-drop-down-menu",
+    "href": "code/3_image_generation_app.html#gradio-app-with-drop-down-menu",
+    "title": "Image Generation App",
+    "section": "Gradio app with drop down menu",
+    "text": "Gradio app with drop down menu\n\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            # Give prompt some real estate\n            prompt = gr.Textbox(label=\"Your prompt\")\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\")  # Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False):  # Let's hide the advanced options!\n        negative_prompt = gr.Textbox(label=\"Negative prompt\")\n        with gr.Row():\n            with gr.Column():\n                steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                                  info=\"In many steps will the denoiser denoise the image?\")\n                guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                                     info=\"Controls how much the text prompt influences the result\")\n            with gr.Column():\n                width = gr.Slider(label=\"Width\", minimum=64,\n                                  maximum=512, step=64, value=512)\n                height = gr.Slider(label=\"Height\", minimum=64,\n                                   maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\")  # Move the output up too\n\n    btn.click(fn=generate, inputs=[\n              prompt, negative_prompt, steps, guidance, width, height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#gradio-user-interface-3",
+    "href": "code/3_image_generation_app.html#gradio-user-interface-3",
+    "title": "Image Generation App",
+    "section": "Gradio user interface",
+    "text": "Gradio user interface"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#optional-api-version-4",
+    "href": "code/3_image_generation_app.html#optional-api-version-4",
+    "title": "Image Generation App",
+    "section": "Optional: API Version",
+    "text": "Optional: API Version\nwith gr.Blocks() as demo:\n    gr.Markdown(\"# Image Generation with Stable Diffusion\")\n    with gr.Row():\n        with gr.Column(scale=4):\n            prompt = gr.Textbox(label=\"Your prompt\") #Give prompt some real estate\n        with gr.Column(scale=1, min_width=50):\n            btn = gr.Button(\"Submit\") #Submit button side by side!\n    with gr.Accordion(\"Advanced options\", open=False): #Let's hide the advanced options!\n            negative_prompt = gr.Textbox(label=\"Negative prompt\")\n            with gr.Row():\n                with gr.Column():\n                    steps = gr.Slider(label=\"Inference Steps\", minimum=1, maximum=100, value=25,\n                      info=\"In many steps will the denoiser denoise the image?\")\n                    guidance = gr.Slider(label=\"Guidance Scale\", minimum=1, maximum=20, value=7,\n                      info=\"Controls how much the text prompt influences the result\")\n                with gr.Column():\n                    width = gr.Slider(label=\"Width\", minimum=64, maximum=512, step=64, value=512)\n                    height = gr.Slider(label=\"Height\", minimum=64, maximum=512, step=64, value=512)\n    output = gr.Image(label=\"Result\") #Move the output up too\n            \n    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])\n\ngr.close_all()\ndemo.launch(share=True, server_port=int(os.environ['PORT4']))"
+  },
+  {
+    "objectID": "code/3_image_generation_app.html#close-all-apps",
+    "href": "code/3_image_generation_app.html#close-all-apps",
+    "title": "Image Generation App",
+    "section": "Close all apps",
+    "text": "Close all apps\n\ngr.close_all()"
   },
   {
     "objectID": "slides/1_nlp_apps.html#python",
@@ -161,60 +329,88 @@
     "text": "Close all apps\n\ngr.close_all()"
   },
   {
-    "objectID": "code/notebook.html",
-    "href": "code/notebook.html",
-    "title": "Notebook",
+    "objectID": "slides/2_image_captioning_app.html#setup",
+    "href": "slides/2_image_captioning_app.html#setup",
+    "title": "Gradio Image Captioning App",
+    "section": "Setup",
+    "text": "Setup"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#python",
+    "href": "slides/2_image_captioning_app.html#python",
+    "title": "Gradio Image Captioning App",
+    "section": "Python",
+    "text": "Python\nLoad your HF API key and relevant Python libraries.\n\nimport gradio as gr\nimport os\nimport io\nimport requests\nimport json\nimport IPython.display\nfrom PIL import Image\nimport base64\nfrom transformers import pipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\nhf_api_key = os.environ['HF_API_KEY']"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#image-captioning-model",
+    "href": "slides/2_image_captioning_app.html#image-captioning-model",
+    "title": "Gradio Image Captioning App",
+    "section": "Image captioning model",
+    "text": "Image captioning model\n\nHere we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.\n\n\nget_completion = pipeline(\n    \"image-to-text\", model=\"Salesforce/blip-image-captioning-base\")\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['generated_text']"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#api-code-optional",
+    "href": "slides/2_image_captioning_app.html#api-code-optional",
+    "title": "Gradio Image Captioning App",
+    "section": "API-code (optional)",
+    "text": "API-code (optional)\n\nOptional: Here is the code for the API-version:\n\n\n# Image-to-text endpoint (with API)\n# def get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_ITT_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL,\n#                                 headers=headers,\n#                                 data=json.dumps(data))\n#     return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#image-example",
+    "href": "slides/2_image_captioning_app.html#image-example",
+    "title": "Gradio Image Captioning App",
+    "section": "Image example",
+    "text": "Image example\n\nFree images are available on: https://free-images.com/\n\n\nimage_url = \"https://free-images.com/sm/9596/dog_animal_greyhound_983023.jpg\"\n\ndisplay(IPython.display.Image(url=image_url))"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#model-output",
+    "href": "slides/2_image_captioning_app.html#model-output",
+    "title": "Gradio Image Captioning App",
+    "section": "Model output",
+    "text": "Model output\n\nget_completion(image_url)\n\n\n[{‘generated_text’: ‘a dog wearing a santa hat and a red scarf’}]"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#captioning-with-gr.interface",
+    "href": "slides/2_image_captioning_app.html#captioning-with-gr.interface",
+    "title": "Gradio Image Captioning App",
+    "section": "Captioning with gr.Interface()",
+    "text": "Captioning with gr.Interface()\n\ndef captioner(input):\n    result = get_completion(input)\n    return result[0]['generated_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=captioner,\n                    inputs=[gr.Image(label=\"Upload image\", type=\"pil\")],\n                    outputs=[gr.Textbox(label=\"Caption\")],\n                    title=\"Image Captioning with BLIP\",\n                    description=\"Caption any image using the BLIP model\",\n                    allow_flagging=\"never\"\n                    # examples=[\"your_image.jpeg\", \"your_image_2.jpeg\"]\n                    )\n\n\ndemo.launch(share=True)"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#gradio-interface",
+    "href": "slides/2_image_captioning_app.html#gradio-interface",
+    "title": "Gradio Image Captioning App",
+    "section": "Gradio interface",
+    "text": "Gradio interface"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#gradio-output",
+    "href": "slides/2_image_captioning_app.html#gradio-output",
+    "title": "Gradio Image Captioning App",
+    "section": "Gradio output",
+    "text": "Gradio output"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#api-version-optional",
+    "href": "slides/2_image_captioning_app.html#api-version-optional",
+    "title": "Gradio Image Captioning App",
+    "section": "API version (optional)",
+    "text": "API version (optional)\n\nOptional: Use this code if you want to use the API\n\n\n# converts image to base 64 format (required for API)\n\n\ndef image_to_base64_str(pil_image):\n    byte_arr = io.BytesIO()\n    pil_image.save(byte_arr, format='PNG')\n    byte_arr = byte_arr.getvalue()\n    return str(base64.b64encode(byte_arr).decode('utf-8'))\n\n\ndef captioner(image):\n    base64_image = image_to_base64_str(image)\n    result = get_completion(base64_image)\n    return result[0]['generated_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=captioner,\n                    inputs=[gr.Image(label=\"Upload image\", type=\"pil\")],\n                    outputs=[gr.Textbox(label=\"Caption\")],\n                    title=\"Image Captioning with BLIP\",\n                    description=\"Caption any image using the BLIP model\",\n                    allow_flagging=\"never\"\n                    # examples=[\"christmas_dog.jpeg\", \"bird_flight.jpeg\", \"cow.jpeg\"]\n                    )\n\n\ndemo.launch(share=True, server_port=int(os.environ['PORT1']))"
+  },
+  {
+    "objectID": "slides/2_image_captioning_app.html#close-all-connections",
+    "href": "slides/2_image_captioning_app.html#close-all-connections",
+    "title": "Gradio Image Captioning App",
+    "section": "Close all connections",
+    "text": "Close all connections\n\ngr.close_all()"
+  },
+  {
+    "objectID": "requirements.html",
+    "href": "requirements.html",
+    "title": "Requirements",
     "section": "",
-    "text": "Load Python libaries and API keys.\n\nimport os\nimport openai\nimport pandas as pd\nimport altair as alt\nfrom dotenv import load_dotenv, find_dotenv\n\n\n_ = load_dotenv(find_dotenv()) # read local .env file\nopenai.api_key  = os.environ['OPENAI_API_KEY']"
-  },
-  {
-    "objectID": "code/notebook.html#setup",
-    "href": "code/notebook.html#setup",
-    "title": "Notebook",
-    "section": "",
-    "text": "Load Python libaries and API keys.\n\nimport os\nimport openai\nimport pandas as pd\nimport altair as alt\nfrom dotenv import load_dotenv, find_dotenv\n\n\n_ = load_dotenv(find_dotenv()) # read local .env file\nopenai.api_key  = os.environ['OPENAI_API_KEY']"
-  },
-  {
-    "objectID": "code/notebook.html#data",
-    "href": "code/notebook.html#data",
-    "title": "Notebook",
-    "section": "Data",
-    "text": "Data"
-  },
-  {
-    "objectID": "assignments.html",
-    "href": "assignments.html",
-    "title": "Assignments",
-    "section": "",
-    "text": "tbd"
-  },
-  {
-    "objectID": "slide.html",
-    "href": "slide.html",
-    "title": "Slides",
-    "section": "",
-    "text": "We use HuggingFace pipelines in the following tutorials."
-  },
-  {
-    "objectID": "slide.html#gradio-nlp-apps",
-    "href": "slide.html#gradio-nlp-apps",
-    "title": "Slides",
-    "section": "1 Gradio NLP Apps",
-    "text": "1 Gradio NLP Apps\nIn this tutorial, you’ll create two NLP apps (text summarization and name entitiy recognition) with a Gradio interface:\n\n🖥️ Gradio NLP apps"
-  },
-  {
-    "objectID": "slide.html#image-captioning-app",
-    "href": "slide.html#image-captioning-app",
-    "title": "Slides",
-    "section": "2 Image Captioning App",
-    "text": "2 Image Captioning App\nIn this tutorial, you’ll create an image captioning app with a Gradio interface:\n\n🖥️ Image captioning app"
-  },
-  {
-    "objectID": "slide.html#image-generation-app",
-    "href": "slide.html#image-generation-app",
-    "title": "Slides",
-    "section": "3 Image Generation App",
-    "text": "3 Image Generation App\nIn this tutorial, you’ll create an image geneartion app with a Gradio interface:\n\n🖥️ Image generation app"
+    "text": "To start this lab, you’ll need:\n\n\n\n\n\n\nImportant\n\n\n\nVisit the “Programming Toolkit-webpage” to learn how to meet all requirements.\n\n\n\nPython: Anaconda, Anaconda Environment gradio and Visual Studio Code\nEnvironment: A lab folder on your machine, an HuggingFace key and an environment file with your HuggingFace key"
   },
   {
     "objectID": "index.html",
@@ -222,6 +418,13 @@
     "title": "Welcome 👋",
     "section": "",
     "text": "Welcome to the lab “Gradio Apps”\n\nIn this lab, we will use HuggingFace’s pipelines to use different models in custom Python applications,\n\n\n\n\n\n\nImportant\n\n\n\nMake sure you meet all the requirements and have read the lecture slides before you start with the assignments\n\n\nWhat you will learn in this lab:\ntbd\n\nThis lab is mainly based on an excellent course provided by Isa Fulford from OpenAI and Andrew Ng from DeepLearning.AI."
+  },
+  {
+    "objectID": "slide.html",
+    "href": "slide.html",
+    "title": "Slides",
+    "section": "",
+    "text": "We use HuggingFace pipelines in the following tutorials.\n\n\n\n\n\n\nTake a look at the slides tutorial to learn how to use all slide options.\nTo download Jupyter Notebooks: Go to the Colab menu and choose “File” &gt; “Download” &gt; “Download .ipynb”\n\n\n\n\n1 Gradio NLP Apps\nIn this tutorial, you’ll create two NLP apps (text summarization and name entitiy recognition) with a Gradio interface:\n\n\n\n\n\n\n\n🖥️ Presentation\n💻 Jupyter Notebook\n\n\n\n\n\n\n2 Image Captioning App\nIn this tutorial, you’ll create an image captioning app with a Gradio interface:\n\n\n\n\n\n\n\n🖥️ Presentation\n💻 Jupyter Notebook\n\n\n\n\n\n\n3 Image Generation App\nIn this tutorial, you’ll create an image geneartion app with a Gradio interface:\n\n\n\n\n\n\n\n🖥️ Presentation\n💻 Jupyter Notebook"
   },
   {
     "objectID": "slides/3_image_generation_app.html#python",
@@ -385,80 +588,234 @@
     "text": "Close all apps\n\ngr.close_all()"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#setup",
-    "href": "slides/2_image_captioning_app.html#setup",
-    "title": "Gradio Image Captioning App",
-    "section": "Setup",
-    "text": "Setup"
-  },
-  {
-    "objectID": "slides/2_image_captioning_app.html#python",
-    "href": "slides/2_image_captioning_app.html#python",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#python",
+    "href": "code/2_image_captioning_app.html#python",
+    "title": "Image Captioning App",
     "section": "Python",
     "text": "Python\nLoad your HF API key and relevant Python libraries.\n\nimport gradio as gr\nimport os\nimport io\nimport requests\nimport json\nimport IPython.display\nfrom PIL import Image\nimport base64\nfrom transformers import pipeline\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\nhf_api_key = os.environ['HF_API_KEY']"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#image-captioning-model",
-    "href": "slides/2_image_captioning_app.html#image-captioning-model",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#image-captioning-model",
+    "href": "code/2_image_captioning_app.html#image-captioning-model",
+    "title": "Image Captioning App",
     "section": "Image captioning model",
     "text": "Image captioning model\n\nHere we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.\n\n\nget_completion = pipeline(\n    \"image-to-text\", model=\"Salesforce/blip-image-captioning-base\")\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['generated_text']"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#api-code-optional",
-    "href": "slides/2_image_captioning_app.html#api-code-optional",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#api-code-optional",
+    "href": "code/2_image_captioning_app.html#api-code-optional",
+    "title": "Image Captioning App",
     "section": "API-code (optional)",
     "text": "API-code (optional)\n\nOptional: Here is the code for the API-version:\n\n\n# Image-to-text endpoint (with API)\n# def get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_ITT_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL,\n#                                 headers=headers,\n#                                 data=json.dumps(data))\n#     return json.loads(response.content.decode(\"utf-8\"))"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#image-example",
-    "href": "slides/2_image_captioning_app.html#image-example",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#image-example",
+    "href": "code/2_image_captioning_app.html#image-example",
+    "title": "Image Captioning App",
     "section": "Image example",
     "text": "Image example\n\nFree images are available on: https://free-images.com/\n\n\nimage_url = \"https://free-images.com/sm/9596/dog_animal_greyhound_983023.jpg\"\n\ndisplay(IPython.display.Image(url=image_url))"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#model-output",
-    "href": "slides/2_image_captioning_app.html#model-output",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#model-output",
+    "href": "code/2_image_captioning_app.html#model-output",
+    "title": "Image Captioning App",
     "section": "Model output",
     "text": "Model output\n\nget_completion(image_url)\n\n\n[{‘generated_text’: ‘a dog wearing a santa hat and a red scarf’}]"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#captioning-with-gr.interface",
-    "href": "slides/2_image_captioning_app.html#captioning-with-gr.interface",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#captioning-with-gr.interface",
+    "href": "code/2_image_captioning_app.html#captioning-with-gr.interface",
+    "title": "Image Captioning App",
     "section": "Captioning with gr.Interface()",
     "text": "Captioning with gr.Interface()\n\ndef captioner(input):\n    result = get_completion(input)\n    return result[0]['generated_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=captioner,\n                    inputs=[gr.Image(label=\"Upload image\", type=\"pil\")],\n                    outputs=[gr.Textbox(label=\"Caption\")],\n                    title=\"Image Captioning with BLIP\",\n                    description=\"Caption any image using the BLIP model\",\n                    allow_flagging=\"never\"\n                    # examples=[\"your_image.jpeg\", \"your_image_2.jpeg\"]\n                    )\n\n\ndemo.launch(share=True)"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#gradio-interface",
-    "href": "slides/2_image_captioning_app.html#gradio-interface",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#gradio-interface",
+    "href": "code/2_image_captioning_app.html#gradio-interface",
+    "title": "Image Captioning App",
     "section": "Gradio interface",
     "text": "Gradio interface"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#gradio-output",
-    "href": "slides/2_image_captioning_app.html#gradio-output",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#gradio-output",
+    "href": "code/2_image_captioning_app.html#gradio-output",
+    "title": "Image Captioning App",
     "section": "Gradio output",
     "text": "Gradio output"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#api-version-optional",
-    "href": "slides/2_image_captioning_app.html#api-version-optional",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#api-version-optional",
+    "href": "code/2_image_captioning_app.html#api-version-optional",
+    "title": "Image Captioning App",
     "section": "API version (optional)",
     "text": "API version (optional)\n\nOptional: Use this code if you want to use the API\n\n\n# converts image to base 64 format (required for API)\n\n\ndef image_to_base64_str(pil_image):\n    byte_arr = io.BytesIO()\n    pil_image.save(byte_arr, format='PNG')\n    byte_arr = byte_arr.getvalue()\n    return str(base64.b64encode(byte_arr).decode('utf-8'))\n\n\ndef captioner(image):\n    base64_image = image_to_base64_str(image)\n    result = get_completion(base64_image)\n    return result[0]['generated_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=captioner,\n                    inputs=[gr.Image(label=\"Upload image\", type=\"pil\")],\n                    outputs=[gr.Textbox(label=\"Caption\")],\n                    title=\"Image Captioning with BLIP\",\n                    description=\"Caption any image using the BLIP model\",\n                    allow_flagging=\"never\"\n                    # examples=[\"christmas_dog.jpeg\", \"bird_flight.jpeg\", \"cow.jpeg\"]\n                    )\n\n\ndemo.launch(share=True, server_port=int(os.environ['PORT1']))"
   },
   {
-    "objectID": "slides/2_image_captioning_app.html#close-all-connections",
-    "href": "slides/2_image_captioning_app.html#close-all-connections",
-    "title": "Gradio Image Captioning App",
+    "objectID": "code/2_image_captioning_app.html#close-all-connections",
+    "href": "code/2_image_captioning_app.html#close-all-connections",
+    "title": "Image Captioning App",
     "section": "Close all connections",
     "text": "Close all connections\n\ngr.close_all()"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html",
+    "href": "code/1_nlp_apps.html",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "",
+    "text": "import gradio as gr\nfrom transformers import pipeline\nimport os\nimport io\nfrom IPython.display import Image, display, HTML\nfrom PIL import Image\nimport base64\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\n\nhf_api_key = os.environ['HF_API_KEY']  # HuggingFace API"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#python",
+    "href": "code/1_nlp_apps.html#python",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "",
+    "text": "import gradio as gr\nfrom transformers import pipeline\nimport os\nimport io\nfrom IPython.display import Image, display, HTML\nfrom PIL import Image\nimport base64\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\n\nhf_api_key = os.environ['HF_API_KEY']  # HuggingFace API"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#text-summarization",
+    "href": "code/1_nlp_apps.html#text-summarization",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Text summarization",
+    "text": "Text summarization\n\nTo learn more about text summarization, take a look at this tutorial"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#helper-function-summarization-pipeline",
+    "href": "code/1_nlp_apps.html#helper-function-summarization-pipeline",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Helper function: summarization pipeline",
+    "text": "Helper function: summarization pipeline\n\nget_completion = pipeline(\n    \"summarization\", model=\"sshleifer/distilbart-cnn-12-6\")"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#api-version",
+    "href": "code/1_nlp_apps.html#api-version",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "API-version",
+    "text": "API-version\n\nThe code would look very similar if you were running it from an API instead of locally.\nThe same is true for all the tutorials in the rest of the course, make sure to check the Pipelines documentation page"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#api-code-optional",
+    "href": "code/1_nlp_apps.html#api-code-optional",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "API code (optional)",
+    "text": "API code (optional)\n\nIn our example: to run it via API, you could use an Inference Endpoint for the sshleifer/distilbart-cnn-12-6, a 306M parameter distilled model from facebook/bart-large-cnn.\n\n\n# # Helper function\n# import requests, json\n\n\n# #Summarization endpoint\n# def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL, headers=headers,\n#                                 data=json.dumps(data)\n#                                )\n#     return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#text-to-summarize",
+    "href": "code/1_nlp_apps.html#text-to-summarize",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Text to summarize",
+    "text": "Text to summarize\n\ntext = ('''One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface. The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. \"text\", \"image\" or \"audio\"); outputs: which component(s) to use for the output (e.g. \"text\", \"image\" or \"label\") ''')"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#summarization-example",
+    "href": "code/1_nlp_apps.html#summarization-example",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Summarization example",
+    "text": "Summarization example\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\nsummarize(text)\n\n\n’ Gradio allows you to build demos and share them in just a few lines of code . The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. “text”, “image” or “audio) or”label”)’"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-app-code",
+    "href": "code/1_nlp_apps.html#gradio-app-code",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio app code",
+    "text": "Gradio app code\n\nGetting started with Gradio gr.Interface\nIf you want to use the API-version, replace demo.launch(share=False) with demo.launch(share=True, server_port=int(os.environ['PORT1']))\n\n\n# Helper function\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\n# Close all current apps\ngr.close_all()\n\n# Start of the app\ndemo = gr.Interface(\n    fn=summarize,\n    inputs=\"text\",\n    outputs=\"text\",\n    examples=[\"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface\"]\n)\n\ndemo.launch(share=False)"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-interface",
+    "href": "code/1_nlp_apps.html#gradio-interface",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio interface",
+    "text": "Gradio interface"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-with-text-input",
+    "href": "code/1_nlp_apps.html#gradio-with-text-input",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio with text input",
+    "text": "Gradio with text input"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-with-output",
+    "href": "code/1_nlp_apps.html#gradio-with-output",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio with output",
+    "text": "Gradio with output"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#extended-gradio-app-code",
+    "href": "code/1_nlp_apps.html#extended-gradio-app-code",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Extended Gradio app code",
+    "text": "Extended Gradio app code\n\nWe include more text in the user interface\ndemo.launch(share=True) creates a public link to share the app.\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=summarize,\n                    inputs=[gr.Textbox(label=\"Text to summarize\", lines=6)],\n                    outputs=[gr.Textbox(label=\"Result\", lines=3)],\n                    title=\"Text summarization with distilbart-cnn\",\n                    description=\"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!\"\n                    )\n\ndemo.launch(share=True)\n\n# API-Version\n# demo.launch(share=True, server_port=int(os.environ['PORT2']))"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#extended-gradio-output",
+    "href": "code/1_nlp_apps.html#extended-gradio-output",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Extended Gradio output",
+    "text": "Extended Gradio output"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#what-is-entity-recognition",
+    "href": "code/1_nlp_apps.html#what-is-entity-recognition",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "What is entity recognition?",
+    "text": "What is entity recognition?\n\nNamed entity recognition (NER): Find the entities (such as persons, locations, or organizations) in a sentence.\nThis can be formulated as attributing a label to each token by having one class per entity and one class for “no entity.”"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#helper-function-named-entity-recognition-pipeline",
+    "href": "code/1_nlp_apps.html#helper-function-named-entity-recognition-pipeline",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Helper function: Named entity recognition pipeline",
+    "text": "Helper function: Named entity recognition pipeline\n\nget_completion = pipeline(\"ner\", model=\"dslim/bert-base-NER\")"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#api-version-1",
+    "href": "code/1_nlp_apps.html#api-version-1",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "API-Version",
+    "text": "API-Version\n\nIf you want to use the Inference Endpoint for dslim/bert-base-NER, a 108M parameter fine-tuned BART model on the NER task:\n\n\n# API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint\n# get_completion(text, parameters=None, ENDPOINT_URL= API_URL)\n\n# API-Version\n# def ner(input):\n#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)\n#     return {\"text\": input, \"entities\": output}"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-ner-app",
+    "href": "code/1_nlp_apps.html#gradio-ner-app",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio NER App",
+    "text": "Gradio NER App\n\ndef ner(input):\n    output = get_completion(input)\n    return {\"text\": input, \"entities\": output}\n\n\ngr.close_all()\n\ndemo = gr.Interface(fn=ner,\n                    inputs=[gr.Textbox(\n                        label=\"Text to find entities\", lines=2)],\n                    outputs=[gr.HighlightedText(label=\"Text with entities\")],\n                    title=\"NER with dslim/bert-base-NER\",\n                    description=\"Find entities using the `dslim/bert-base-NER` model under the hood!\",\n                    allow_flagging=\"never\",\n                    # Here we introduce a new tag, examples, easy to use examples for your application\n                    examples=[\"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart\", \"My name is Lina and I study at HdM Stuttgart\"])\n\ndemo.launch(share=True)\n\n# API-Version\n# demo.launch(share=True, server_port=int(os.environ['PORT3']))"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#app-interface",
+    "href": "code/1_nlp_apps.html#app-interface",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "App interface",
+    "text": "App interface"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#app-with-output",
+    "href": "code/1_nlp_apps.html#app-with-output",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "App with output",
+    "text": "App with output"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-ner-app-with-merged-tokens",
+    "href": "code/1_nlp_apps.html#gradio-ner-app-with-merged-tokens",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio NER app with merged tokens",
+    "text": "Gradio NER app with merged tokens\n\ndef merge_tokens(tokens):\n    merged_tokens = []\n    for token in tokens:\n        if merged_tokens and token['entity'].startswith('I-') and merged_tokens[-1]['entity'].endswith(token['entity'][2:]):\n            # If current token continues the entity of the last one, merge them\n            last_token = merged_tokens[-1]\n            last_token['word'] += token['word'].replace('##', '')\n            last_token['end'] = token['end']\n            last_token['score'] = (last_token['score'] + token['score']) / 2\n        else:\n            # Otherwise, add the token to the list\n            merged_tokens.append(token)\n\n    return merged_tokens\n\n\ndef ner(input):\n    output = get_completion(input)\n    merged_tokens = merge_tokens(output)\n    return {\"text\": input, \"entities\": merged_tokens}\n\n\ngr.close_all()\ndemo = gr.Interface(fn=ner,\n                    inputs=[gr.Textbox(\n                        label=\"Text to find entities\", lines=2)],\n                    outputs=[gr.HighlightedText(label=\"Text with entities\")],\n                    title=\"NER with dslim/bert-base-NER\",\n                    description=\"Find entities using the `dslim/bert-base-NER` model under the hood!\",\n                    allow_flagging=\"never\",\n                    examples=[\"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart\", \"My name is Lina, I live in Stuttgart and study at HdM Stuttgart\"])\n\ndemo.launch(share=True)\n\n# API-Version\n# demo.launch(share=True, server_port=int(os.environ['PORT4']))"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#gradio-output",
+    "href": "code/1_nlp_apps.html#gradio-output",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Gradio output",
+    "text": "Gradio output"
+  },
+  {
+    "objectID": "code/1_nlp_apps.html#close-all-apps",
+    "href": "code/1_nlp_apps.html#close-all-apps",
+    "title": "NLP apps with a simple Gradio interface",
+    "section": "Close all apps",
+    "text": "Close all apps\n\ngr.close_all()"
   }
 ]

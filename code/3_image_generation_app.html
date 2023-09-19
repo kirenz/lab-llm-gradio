@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Gradio Apps - Image Generation App</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="..//images/logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Gradio Apps</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../slide.html" rel="" target="">
+ <span class="menu-text">Slides</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../requirements.html" rel="" target="">
+ <span class="menu-text">Requirements</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../assignments.html" rel="" target="">
+ <span class="menu-text">Assignments</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a>
+  <ul class="collapse">
+  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
+  <li><a href="#load-model-only-apple-silicon" id="toc-load-model-only-apple-silicon" class="nav-link" data-scroll-target="#load-model-only-apple-silicon">Load model (only Apple Silicon)</a></li>
+  <li><a href="#load-model-only-apple-intel-and-windows" id="toc-load-model-only-apple-intel-and-windows" class="nav-link" data-scroll-target="#load-model-only-apple-intel-and-windows">Load Model (only Apple Intel and Windows)</a></li>
+  <li><a href="#optional-api-version" id="toc-optional-api-version" class="nav-link" data-scroll-target="#optional-api-version">Optional: API-version</a></li>
+  </ul></li>
+  <li><a href="#image-generation-app" id="toc-image-generation-app" class="nav-link" data-scroll-target="#image-generation-app">Image Generation App</a>
+  <ul class="collapse">
+  <li><a href="#example-prompt" id="toc-example-prompt" class="nav-link" data-scroll-target="#example-prompt">Example prompt</a></li>
+  <li><a href="#result" id="toc-result" class="nav-link" data-scroll-target="#result">Result</a></li>
+  <li><a href="#generating-with-gr.interface" id="toc-generating-with-gr.interface" class="nav-link" data-scroll-target="#generating-with-gr.interface">Generating with <code>gr.Interface()</code></a></li>
+  <li><a href="#gradio-user-interface" id="toc-gradio-user-interface" class="nav-link" data-scroll-target="#gradio-user-interface">Gradio user interface</a></li>
+  <li><a href="#output" id="toc-output" class="nav-link" data-scroll-target="#output">Output</a></li>
+  <li><a href="#optional-api-version-1" id="toc-optional-api-version-1" class="nav-link" data-scroll-target="#optional-api-version-1">Optional: API-Version</a></li>
+  <li><a href="#close-apps" id="toc-close-apps" class="nav-link" data-scroll-target="#close-apps">Close apps</a></li>
+  </ul></li>
+  <li><a href="#advanced-user-interface" id="toc-advanced-user-interface" class="nav-link" data-scroll-target="#advanced-user-interface">Advanced User Interface</a>
+  <ul class="collapse">
+  <li><a href="#gradio-app" id="toc-gradio-app" class="nav-link" data-scroll-target="#gradio-app">Gradio app</a></li>
+  <li><a href="#gradio-user-interface-1" id="toc-gradio-user-interface-1" class="nav-link" data-scroll-target="#gradio-user-interface-1">Gradio user interface</a></li>
+  <li><a href="#model-output" id="toc-model-output" class="nav-link" data-scroll-target="#model-output">Model output</a></li>
+  <li><a href="#optional-api-version-2" id="toc-optional-api-version-2" class="nav-link" data-scroll-target="#optional-api-version-2">Optional: API-version</a></li>
+  <li><a href="#close-apps-1" id="toc-close-apps-1" class="nav-link" data-scroll-target="#close-apps-1">Close apps</a></li>
+  </ul></li>
+  <li><a href="#gradio-blocks" id="toc-gradio-blocks" class="nav-link" data-scroll-target="#gradio-blocks">Gradio Blocks</a>
+  <ul class="collapse">
+  <li><a href="#gradio-example-with-blocks" id="toc-gradio-example-with-blocks" class="nav-link" data-scroll-target="#gradio-example-with-blocks">Gradio example with Blocks</a></li>
+  <li><a href="#gradio-user-interface-2" id="toc-gradio-user-interface-2" class="nav-link" data-scroll-target="#gradio-user-interface-2">Gradio user interface</a></li>
+  <li><a href="#optional-api-version-3" id="toc-optional-api-version-3" class="nav-link" data-scroll-target="#optional-api-version-3">Optional: API Version</a></li>
+  <li><a href="#gradio-app-with-drop-down-menu" id="toc-gradio-app-with-drop-down-menu" class="nav-link" data-scroll-target="#gradio-app-with-drop-down-menu">Gradio app with drop down menu</a></li>
+  <li><a href="#gradio-user-interface-3" id="toc-gradio-user-interface-3" class="nav-link" data-scroll-target="#gradio-user-interface-3">Gradio user interface</a></li>
+  <li><a href="#optional-api-version-4" id="toc-optional-api-version-4" class="nav-link" data-scroll-target="#optional-api-version-4">Optional: API Version</a></li>
+  <li><a href="#close-all-apps" id="toc-close-all-apps" class="nav-link" data-scroll-target="#close-all-apps">Close all apps</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Image Generation App</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<section id="python" class="level2">
+<h2 class="anchored" data-anchor-id="python">Python</h2>
+<p>Load your HF API key and relevant Python libraries</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> io</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> IPython.display</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> diffusers <span class="im">import</span> DiffusionPipeline</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> load_dotenv(find_dotenv())  <span class="co"># read local .env file</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>hf_api_key <span class="op">=</span> os.environ[<span class="st">'HF_API_KEY'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-model-only-apple-silicon" class="level2">
+<h2 class="anchored" data-anchor-id="load-model-only-apple-silicon">Load model (only Apple Silicon)</h2>
+<ul>
+<li>In this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).</li>
+<li>You’ll find the Windows and Apple Intel version below</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apple Silicon version</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> DiffusionPipeline.from_pretrained(<span class="st">"runwayml/stable-diffusion-v1-5"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipe.to(<span class="st">"mps"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Recommended if your computer has &lt; 64 GB of RAM</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>pipe.enable_attention_slicing()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_completion(prompt):</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pipe(prompt).images[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-model-only-apple-intel-and-windows" class="level2">
+<h2 class="anchored" data-anchor-id="load-model-only-apple-intel-and-windows">Load Model (only Apple Intel and Windows)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> DiffusionPipeline.from_pretrained(<span class="st">"runwayml/stable-diffusion-v1-5"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_completion(prompt):</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pipe(prompt).images[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="optional-api-version" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="optional-api-version">Optional: API-version</h2>
+<ul>
+<li>Only use this code if you want to use the API</li>
+</ul>
+<pre class="{Python}"><code>
+# Helper function
+import requests, json
+
+#Text-to-image endpoint
+def get_completion(inputs, parameters=None, ENDPOINT_URL=os.environ['HF_API_TTI_BASE']):
+    headers = {
+      "Authorization": f"Bearer {hf_api_key}",
+      "Content-Type": "application/json"
+    }   
+    data = { "inputs": inputs }
+    if parameters is not None:
+        data.update({"parameters": parameters})
+    response = requests.request("POST",
+                                ENDPOINT_URL,
+                                headers=headers,
+                                data=json.dumps(data))
+    return json.loads(response.content.decode("utf-8"))</code></pre>
+</section>
+</section>
+<section id="image-generation-app" class="level1">
+<h1>Image Generation App</h1>
+<p>Building an image generation app</p>
+<section id="example-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="example-prompt">Example prompt</h2>
+<ul>
+<li>Here we are going to run <code>runwayml/stable-diffusion-v1-5</code> using the <code>🧨 diffusers</code> library.</li>
+</ul>
+<pre class="{Python}"><code>prompt = "a dog in a park"</code></pre>
+</section>
+<section id="result" class="level2">
+<h2 class="anchored" data-anchor-id="result">Result</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> get_completion(prompt)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="../images/dog_in_park.png" class="img-fluid"></p>
+</section>
+<section id="generating-with-gr.interface" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="generating-with-gr.interface">Generating with <code>gr.Interface()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate(inputs):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(inputs)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>generate,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Your prompt"</span>)],</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.Image(label<span class="op">=</span><span class="st">"Result"</span>)],</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"Image Generation with Stable Diffusion"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Generate any image with Stable Diffusion"</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                    examples<span class="op">=</span>[</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"a scary cyborg wandering in the city of Stuttgart"</span>, <span class="st">"a red Jeep in a swimming pool"</span>]</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gradio-user-interface" class="level2">
+<h2 class="anchored" data-anchor-id="gradio-user-interface">Gradio user interface</h2>
+<p><img src="../images/image_gen_1.png" class="img-fluid"></p>
+</section>
+<section id="output" class="level2">
+<h2 class="anchored" data-anchor-id="output">Output</h2>
+<p><img src="../images/image_gen_2.png" class="img-fluid"></p>
+</section>
+<section id="optional-api-version-1" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="optional-api-version-1">Optional: API-Version</h2>
+<pre class="{Python}"><code>import gradio as gr 
+
+#A helper function to convert the PIL image to base64
+#so you can send it to the API
+def base64_to_pil(img_base64):
+    base64_decoded = base64.b64decode(img_base64)
+    byte_stream = io.BytesIO(base64_decoded)
+    pil_image = Image.open(byte_stream)
+    return pil_image
+
+def generate(prompt):
+    output = get_completion(prompt)
+    result_image = base64_to_pil(output)
+    return result_image
+
+gr.close_all()
+demo = gr.Interface(fn=generate,
+                    inputs=[gr.Textbox(label="Your prompt")],
+                    outputs=[gr.Image(label="Result")],
+                    title="Image Generation with Stable Diffusion",
+                    description="Generate any image with Stable Diffusion",
+                    allow_flagging="never",
+                    examples=["the spirit of a tamagotchi wandering in the city of Vienna","a mecha robot in a favela"])
+
+demo.launch(share=True, server_port=int(os.environ['PORT1']))</code></pre>
+</section>
+<section id="close-apps" class="level2">
+<h2 class="anchored" data-anchor-id="close-apps">Close apps</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>demo.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-user-interface" class="level1">
+<h1>Advanced User Interface</h1>
+<p>Building a more advanced interface</p>
+<section id="gradio-app" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="gradio-app">Gradio app</h2>
+<p>Note: The following code for the local app mimics the code of the API-version as close as possible.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_completion(inputs, parameters<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> {<span class="st">"inputs"</span>: inputs}</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> parameters <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        data.update({<span class="st">"parameters"</span>: parameters})</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> json.dumps(data)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pipe(response).images[<span class="dv">0</span>]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate(prompt, negative_prompt, steps, guidance, width, height):</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> {</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"negative_prompt"</span>: negative_prompt,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num_inference_steps"</span>: steps,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"guidance_scale"</span>: guidance,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"width"</span>: width,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"height"</span>: height</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(prompt, params)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>generate,</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>                        gr.Textbox(label<span class="op">=</span><span class="st">"Your prompt"</span>),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                        gr.Textbox(label<span class="op">=</span><span class="st">"Negative prompt"</span>),</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                        gr.Slider(label<span class="op">=</span><span class="st">"Inference Steps"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">100</span>, value<span class="op">=</span><span class="dv">25</span>,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>                                  info<span class="op">=</span><span class="st">"In how many steps will the denoiser denoise the image?"</span>),</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>                        gr.Slider(label<span class="op">=</span><span class="st">"Guidance Scale"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">20</span>, value<span class="op">=</span><span class="dv">7</span>,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                                  info<span class="op">=</span><span class="st">"Controls how much the text prompt influences the result"</span>),</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>                        gr.Slider(label<span class="op">=</span><span class="st">"Width"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>                                  maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>),</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>                        gr.Slider(label<span class="op">=</span><span class="st">"Height"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>                                  maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>),</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>                    ],</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.Image(label<span class="op">=</span><span class="st">"Result"</span>)],</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"Image Generation with Stable Diffusion"</span>,</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Generate any image with Stable Diffusion"</span>,</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gradio-user-interface-1" class="level2">
+<h2 class="anchored" data-anchor-id="gradio-user-interface-1">Gradio user interface</h2>
+<p><img src="../images/image_gen_3.png" class="img-fluid"></p>
+</section>
+<section id="model-output" class="level2">
+<h2 class="anchored" data-anchor-id="model-output">Model output</h2>
+<p><img src="../images/image_gen_4.png" class="img-fluid"></p>
+<p>🤔</p>
+</section>
+<section id="optional-api-version-2" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="optional-api-version-2">Optional: API-version</h2>
+<pre class="{Python}"><code>
+#A helper function to convert the PIL image to base64 
+# so you can send it to the API
+def base64_to_pil(img_base64):
+    base64_decoded = base64.b64decode(img_base64)
+    byte_stream = io.BytesIO(base64_decoded)
+    pil_image = Image.open(byte_stream)
+    return pil_image
+
+def generate(prompt, negative_prompt, steps, guidance, width, height):
+    params = {
+        "negative_prompt": negative_prompt,
+        "num_inference_steps": steps,
+        "guidance_scale": guidance,
+        "width": width,
+        "height": height
+    }
+    
+    output = get_completion(prompt, params)
+    pil_image = base64_to_pil(output)
+    return pil_image
+
+gr.close_all()
+demo = gr.Interface(fn=generate,
+                    inputs=[
+                        gr.Textbox(label="Your prompt"),
+                        gr.Textbox(label="Negative prompt"),
+                        gr.Slider(label="Inference Steps", minimum=1, maximum=100, value=25,
+                                 info="In how many steps will the denoiser denoise the image?"),
+                        gr.Slider(label="Guidance Scale", minimum=1, maximum=20, value=7, 
+                                  info="Controls how much the text prompt influences the result"),
+                        gr.Slider(label="Width", minimum=64, maximum=512, step=64, value=512),
+                        gr.Slider(label="Height", minimum=64, maximum=512, step=64, value=512),
+                    ],
+                    outputs=[gr.Image(label="Result")],
+                    title="Image Generation with Stable Diffusion",
+                    description="Generate any image with Stable Diffusion",
+                    allow_flagging="never"
+                    )
+
+demo.launch(share=True, server_port=int(os.environ['PORT2']))</code></pre>
+</section>
+<section id="close-apps-1" class="level2">
+<h2 class="anchored" data-anchor-id="close-apps-1">Close apps</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>demo.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="gradio-blocks" class="level1">
+<h1>Gradio Blocks</h1>
+<section id="gradio-example-with-blocks" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="gradio-example-with-blocks">Gradio example with Blocks</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    gr.Markdown(<span class="st">"# Image Generation with Stable Diffusion"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> gr.Textbox(label<span class="op">=</span><span class="st">"Your prompt"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            negative_prompt <span class="op">=</span> gr.Textbox(label<span class="op">=</span><span class="st">"Negative prompt"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            steps <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Inference Steps"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">100</span>, value<span class="op">=</span><span class="dv">25</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                              info<span class="op">=</span><span class="st">"In many steps will the denoiser denoise the image?"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>            guidance <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Guidance Scale"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">20</span>, value<span class="op">=</span><span class="dv">7</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                                 info<span class="op">=</span><span class="st">"Controls how much the text prompt influences the result"</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>            width <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Width"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                              maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>            height <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Height"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>                               maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>            btn <span class="op">=</span> gr.Button(<span class="st">"Submit"</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>            output <span class="op">=</span> gr.Image(label<span class="op">=</span><span class="st">"Result"</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    btn.click(fn<span class="op">=</span>generate, inputs<span class="op">=</span>[</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>              prompt, negative_prompt, steps, guidance, width, height], outputs<span class="op">=</span>[output])</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gradio-user-interface-2" class="level2">
+<h2 class="anchored" data-anchor-id="gradio-user-interface-2">Gradio user interface</h2>
+<p><img src="../images/image_gen_5.png" class="img-fluid"></p>
+</section>
+<section id="optional-api-version-3" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="optional-api-version-3">Optional: API Version</h2>
+<pre class="{Python}"><code>
+with gr.Blocks() as demo:
+    gr.Markdown("# Image Generation with Stable Diffusion")
+    prompt = gr.Textbox(label="Your prompt")
+    with gr.Row():
+        with gr.Column():
+            negative_prompt = gr.Textbox(label="Negative prompt")
+            steps = gr.Slider(label="Inference Steps", minimum=1, maximum=100, value=25,
+                      info="In many steps will the denoiser denoise the image?")
+            guidance = gr.Slider(label="Guidance Scale", minimum=1, maximum=20, value=7,
+                      info="Controls how much the text prompt influences the result")
+            width = gr.Slider(label="Width", minimum=64, maximum=512, step=64, value=512)
+            height = gr.Slider(label="Height", minimum=64, maximum=512, step=64, value=512)
+            btn = gr.Button("Submit")
+        with gr.Column():
+            output = gr.Image(label="Result")
+
+    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])
+gr.close_all()
+demo.launch(share=True, server_port=int(os.environ['PORT3']))
+</code></pre>
+</section>
+<section id="gradio-app-with-drop-down-menu" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="gradio-app-with-drop-down-menu">Gradio app with drop down menu</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    gr.Markdown(<span class="st">"# Image Generation with Stable Diffusion"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> gr.Column(scale<span class="op">=</span><span class="dv">4</span>):</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Give prompt some real estate</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>            prompt <span class="op">=</span> gr.Textbox(label<span class="op">=</span><span class="st">"Your prompt"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> gr.Column(scale<span class="op">=</span><span class="dv">1</span>, min_width<span class="op">=</span><span class="dv">50</span>):</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            btn <span class="op">=</span> gr.Button(<span class="st">"Submit"</span>)  <span class="co"># Submit button side by side!</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> gr.Accordion(<span class="st">"Advanced options"</span>, <span class="bu">open</span><span class="op">=</span><span class="va">False</span>):  <span class="co"># Let's hide the advanced options!</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        negative_prompt <span class="op">=</span> gr.Textbox(label<span class="op">=</span><span class="st">"Negative prompt"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> gr.Row():</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>                steps <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Inference Steps"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">100</span>, value<span class="op">=</span><span class="dv">25</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>                                  info<span class="op">=</span><span class="st">"In many steps will the denoiser denoise the image?"</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>                guidance <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Guidance Scale"</span>, minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">20</span>, value<span class="op">=</span><span class="dv">7</span>,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>                                     info<span class="op">=</span><span class="st">"Controls how much the text prompt influences the result"</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>                width <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Width"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>                                  maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>                height <span class="op">=</span> gr.Slider(label<span class="op">=</span><span class="st">"Height"</span>, minimum<span class="op">=</span><span class="dv">64</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>                                   maximum<span class="op">=</span><span class="dv">512</span>, step<span class="op">=</span><span class="dv">64</span>, value<span class="op">=</span><span class="dv">512</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> gr.Image(label<span class="op">=</span><span class="st">"Result"</span>)  <span class="co"># Move the output up too</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    btn.click(fn<span class="op">=</span>generate, inputs<span class="op">=</span>[</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>              prompt, negative_prompt, steps, guidance, width, height], outputs<span class="op">=</span>[output])</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="gradio-user-interface-3" class="level2">
+<h2 class="anchored" data-anchor-id="gradio-user-interface-3">Gradio user interface</h2>
+<p><img src="../images/gradio_app_7.png" class="img-fluid"></p>
+</section>
+<section id="optional-api-version-4" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="optional-api-version-4">Optional: API Version</h2>
+<pre class="{Python}"><code>with gr.Blocks() as demo:
+    gr.Markdown("# Image Generation with Stable Diffusion")
+    with gr.Row():
+        with gr.Column(scale=4):
+            prompt = gr.Textbox(label="Your prompt") #Give prompt some real estate
+        with gr.Column(scale=1, min_width=50):
+            btn = gr.Button("Submit") #Submit button side by side!
+    with gr.Accordion("Advanced options", open=False): #Let's hide the advanced options!
+            negative_prompt = gr.Textbox(label="Negative prompt")
+            with gr.Row():
+                with gr.Column():
+                    steps = gr.Slider(label="Inference Steps", minimum=1, maximum=100, value=25,
+                      info="In many steps will the denoiser denoise the image?")
+                    guidance = gr.Slider(label="Guidance Scale", minimum=1, maximum=20, value=7,
+                      info="Controls how much the text prompt influences the result")
+                with gr.Column():
+                    width = gr.Slider(label="Width", minimum=64, maximum=512, step=64, value=512)
+                    height = gr.Slider(label="Height", minimum=64, maximum=512, step=64, value=512)
+    output = gr.Image(label="Result") #Move the output up too
+            
+    btn.click(fn=generate, inputs=[prompt,negative_prompt,steps,guidance,width,height], outputs=[output])
+
+gr.close_all()
+demo.launch(share=True, server_port=int(os.environ['PORT4']))</code></pre>
+</section>
+<section id="close-all-apps" class="level2">
+<h2 class="anchored" data-anchor-id="close-all-apps">Close all apps</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">© <a href="https://www.kirenz.com/">Jan Kirenz</a>, 2023</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../slide.html">Slides</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../requirements.html">Requirements</a>
+  </li>  
+    <li class="nav-item">
+    <a class="nav-link" href="../assignments.html">Assignments</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://moodle.hdm-stuttgart.de/login/index.php">
+      <i class="bi bi-person-circle" role="img" aria-label="Moodle">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

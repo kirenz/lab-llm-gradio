@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/requirements.html</loc>
-    <lastmod>2023-08-26T15:49:36.711Z</lastmod>
+    <loc>https://github.com/kirenz/lab-llm-gradio/assignments.html</loc>
+    <lastmod>2023-09-19T15:41:15.798Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/code/3_image_generation_app.html</loc>
+    <lastmod>2023-09-19T15:41:15.034Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/kirenz/lab-llm-gradio/slides/1_nlp_apps.html</loc>
-    <lastmod>2023-08-26T15:49:35.435Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/code/notebook.html</loc>
-    <lastmod>2023-08-26T15:49:32.779Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/assignments.html</loc>
-    <lastmod>2023-08-26T15:49:32.055Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/slide.html</loc>
-    <lastmod>2023-08-26T15:49:31.315Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/index.html</loc>
-    <lastmod>2023-08-26T15:49:32.415Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/kirenz/lab-llm-gradio/slides/3_image_generation_app.html</loc>
-    <lastmod>2023-08-26T15:49:34.751Z</lastmod>
+    <lastmod>2023-09-19T15:41:13.546Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/kirenz/lab-llm-gradio/slides/2_image_captioning_app.html</loc>
-    <lastmod>2023-08-26T15:49:35.899Z</lastmod>
+    <lastmod>2023-09-19T15:41:12.134Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/requirements.html</loc>
+    <lastmod>2023-09-19T15:41:10.906Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/index.html</loc>
+    <lastmod>2023-09-19T15:41:10.230Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/slide.html</loc>
+    <lastmod>2023-09-19T15:41:11.558Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/slides/3_image_generation_app.html</loc>
+    <lastmod>2023-09-19T15:41:12.978Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/code/2_image_captioning_app.html</loc>
+    <lastmod>2023-09-19T15:41:14.310Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/kirenz/lab-llm-gradio/code/1_nlp_apps.html</loc>
+    <lastmod>2023-09-19T15:41:15.522Z</lastmod>
   </url>
 </urlset>
