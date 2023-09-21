@@ -1,11 +1,11 @@
 # Welcome to our lab 👋
 
-You can open the Jupyter Notebooks in Colab (on this [site](https://kirenz.github.io/lab-gradio/slide.html)) or in GitHub Codespaces (see instructions below).
+You can open the Jupyter Notebooks in Colab (on this [site](https://kirenz.github.io/lab-llm-gradio/slide.html)) or in GitHub Codespaces (see instructions below).
 
 ## Create Codespace
 
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kirenz/lab-gradio?quickstart=1)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/kirenz/lab-llm-gradio?quickstart=1)
 
 1. Simply choose the *default* settings and create the Codespace.
 
