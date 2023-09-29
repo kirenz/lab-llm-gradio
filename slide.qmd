@@ -37,7 +37,7 @@ In this tutorial, you'll create an image captioning app with a Gradio interface:
 
 # Image Generation App
 
-In this tutorial, you'll create an image geneartion app with a Gradio interface:
+In this tutorial, you'll create an image generation app with a Gradio interface:
 
 ::: {.callout-tip appearance="simple" icon=false}
 - [🖥️ Presentation](/slides/3_image_generation_app.qmd)
