@@ -12,10 +12,13 @@ In this lab, we will use HuggingFace's pipelines to use different models in cust
 Make sure you meet all the [requirements](/requirements.qmd) and have read the lecture [slides](/slide.qmd) before you start with the [assignments](/assignments.qmd) 
 :::
 
-What you will learn in this lab:
+In this lab, you'll create Gradio interfaces for
 
+- two NLP apps (text summarization and name entitiy recognition) 
 
-tbd
+- an image captioning app 
+
+- an image generation app 
 
 ---
 
