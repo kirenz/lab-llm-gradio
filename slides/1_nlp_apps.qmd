@@ -35,6 +35,9 @@ format:
 
 # NLP apps with a simple Gradio interface  
 
+In this tutorial, you'll create two NLP apps (text summarization and name entitiy recognition) with a Gradio interface and HuggingFace.
+
+*This tutorial is mainly based on an excellent course provided by Isa Fulford from OpenAI and Andrew Ng from DeepLearning.AI.*
 
 # Setup
 
@@ -49,11 +52,89 @@ from IPython.display import Image, display, HTML
 from PIL import Image
 import base64
 from dotenv import load_dotenv, find_dotenv
-_ = load_dotenv(find_dotenv())  # read local .env file
+_ = load_dotenv(find_dotenv()) 
 
 hf_api_key = os.environ['HF_API_KEY']  # HuggingFace API
 ```
 
+
+# HuggingFace
+
+## Basics
+
+- Hugging Face is a popular library for Natural Language Processing (NLP).
+- Provides easy-to-use interfaces known as `pipelines` for common NLP tasks.
+- Two main ways to use Hugging Face pipelines: locally or via the API.
+
+## Local Pipeline Usage {.smaller}
+
+```python
+from transformers import pipeline
+
+# Load a pipeline
+classifier = pipeline('sentiment-analysis')
+
+# Use the pipeline
+results = classifier('Hugging Face is creating a tool that democratizes AI.')
+```
+
+- Installation Required: Need to install Hugging Face Transformers library.
+
+- Data Privacy: Data remains on your local machine, ensuring privacy.
+
+- Cost: Free of charge
+
+- Performance: Performance dependent on your local machine's capabilities.
+
+- Customization: Easier to customize and tweak the pipeline.
+
+
+## Local Pipeline example
+
+```python
+from transformers import pipeline
+
+# Load a pipeline
+classifier = pipeline('sentiment-analysis')
+
+# Use the pipeline
+results = classifier('Hugging Face is creating a tool that democratizes AI.')
+```
+
+## API Pipeline Usage
+
+- No Installation required
+
+- Data Privacy Concerns: Data sent to Hugging Face servers, may not be suitable for sensitive data.
+
+- Cost: May incur charges depending on usage.
+
+- Performance: Performance dependent on network latency and Hugging Face's server capabilities.
+
+- Customization: Limited customization compared to local usage.
+
+## API Pipeline example
+
+```python
+import requests
+
+# Define the API endpoint and data
+url = 'https://api-inference.huggingface.co/pipeline/sentiment-analysis'
+headers = {'Authorization': 'Bearer YOUR_API_TOKEN'}
+data = {'inputs': 'Hugging Face is creating a tool that democratizes AI.'}
+
+# Make a request to the API
+response = requests.post(url, headers=headers, json=data)
+
+# Print the response
+print(response.json())
+```
+
+## Conclusion
+
+- Choosing between local and API pipeline usage depends on your project's requirements regarding data privacy, cost, performance, and customization.
+
+- Both methods offer a straightforward way to leverage the power of Hugging Face for NLP tasks.
 
 # Text Summarization App
 
@@ -64,25 +145,23 @@ Building a text summarization app
 - To learn more about text summarization, take a look at [this tutorial](https://kirenz.github.io/huggingface/text-summarization/summarization-pipeline#/title-slide)
 
 
-## Helper function: summarization pipeline
+## Helper function: local summarization pipeline
 
 ```{python}
 
 get_completion = pipeline(
-    "summarization", model="sshleifer/distilbart-cnn-12-6")
-
+    "summarization", 
+    model="sshleifer/distilbart-cnn-12-6"
+    )
 
 ```
 
-## API-version {.smaller}
+- We use the HuggingFace [pipeline](https://huggingface.co/docs/transformers/main_classes/pipelines).
 
-- The code would look very similar if you were running it from an API instead of locally. 
 
-- The same is true for all the tutorials in the rest of the course, make sure to check the [Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) documentation page
+## Helper function for API (optional) {smaller}
 
-## API code (optional)
-
-- In our example: to run it via API, you could use an [Inference Endpoint](https://huggingface.co/inference-endpoints) for the `sshleifer/distilbart-cnn-12-6`, a 306M parameter distilled model from `facebook/bart-large-cnn`. 
+- To run it via API, you could use an [Inference Endpoint](https://huggingface.co/inference-endpoints) for the `sshleifer/distilbart-cnn-12-6`, a 306M parameter distilled model from `facebook/bart-large-cnn`. 
 
 . . .
 
@@ -121,7 +200,6 @@ text = ('''One of the best ways to share your machine learning model, API, or da
 
 ```{python}
 
-
 def summarize(input):
     output = get_completion(input)
     return output[0]['summary_text']
@@ -137,13 +215,12 @@ summarize(text)
 ## Gradio app code {.smaller}
 
 - Getting started with Gradio `gr.Interface` 
+- `demo.launch(share=True)` creates a public link to share the app.
 - If you want to use the API-version, replace `demo.launch(share=False)` with `demo.launch(share=True, server_port=int(os.environ['PORT1']))`
 
 . . .
 
 ```{python}
-# | eval: false
-
 # Helper function
 
 
@@ -163,7 +240,7 @@ demo = gr.Interface(
     examples=["One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface"]
 )
 
-demo.launch(share=False)
+demo.launch(share=True)
 
 ```
 
@@ -186,12 +263,10 @@ demo.launch(share=False)
 ## Extended Gradio app code {.smaller}
 
 - We include more text in the user interface
-- `demo.launch(share=True)` creates a public link to share the app.
 
 . . . 
 
 ```{python}
-# | eval: false
 
 
 def summarize(input):
@@ -239,7 +314,7 @@ get_completion = pipeline("ner", model="dslim/bert-base-NER")
 
 ```
 
-## API-Version
+## Helper function for API-Version
 
 - If you want to use the [Inference Endpoint](https://huggingface.co/inference-endpoints) for `dslim/bert-base-NER`, a 108M parameter fine-tuned BART model on the NER task:
 
@@ -259,7 +334,6 @@ get_completion = pipeline("ner", model="dslim/bert-base-NER")
 ## Gradio NER App {.smaller}
 
 ```{python}
-# | eval: false
 
 def ner(input):
     output = get_completion(input)
@@ -298,7 +372,6 @@ demo.launch(share=True)
 ## Gradio NER app with merged tokens
 
 ```{python}
-# | eval: false
 
 
 def merge_tokens(tokens):
