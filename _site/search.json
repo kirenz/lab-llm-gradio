@@ -4,7 +4,7 @@
     "href": "slides/1_nlp_apps.html#python",
     "title": "Gradio NLP Apps",
     "section": "Python",
-    "text": "Python\n\nimport gradio as gr\nfrom transformers import pipeline\nimport os\nimport io\nfrom IPython.display import Image, display, HTML\nfrom PIL import Image\nimport base64\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv())  # read local .env file\n\nhf_api_key = os.environ['HF_API_KEY']  # HuggingFace API"
+    "text": "Python\n\nimport gradio as gr\nfrom transformers import pipeline\nimport os\nimport io\nfrom IPython.display import Image, display, HTML\nfrom PIL import Image\nimport base64\nfrom dotenv import load_dotenv, find_dotenv\n_ = load_dotenv(find_dotenv()) \n\nhf_api_key = os.environ['HF_API_KEY']  # HuggingFace API"
   },
   {
     "objectID": "slides/1_nlp_apps.html#text-summarization",
@@ -60,7 +60,7 @@
     "href": "slides/1_nlp_apps.html#gradio-app-code",
     "title": "Gradio NLP Apps",
     "section": "Gradio app code",
-    "text": "Gradio app code\n\nGetting started with Gradio gr.Interface\nIf you want to use the API-version, replace demo.launch(share=False) with demo.launch(share=True, server_port=int(os.environ['PORT1']))\n\n\n\n# Helper function\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\n# Close all current apps\ngr.close_all()\n\n# Start of the app\ndemo = gr.Interface(\n    fn=summarize,\n    inputs=\"text\",\n    outputs=\"text\",\n    examples=[\"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface\"]\n)\n\ndemo.launch(share=False)"
+    "text": "Gradio app code\n\nGetting started with Gradio gr.Interface\ndemo.launch(share=True) creates a public link to share the app.\nIf you want to use the API-version, replace demo.launch(share=False) with demo.launch(share=True, server_port=int(os.environ['PORT1']))\n\n\n\n# Helper function\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\n# Close all current apps\ngr.close_all()\n\n# Start of the app\ndemo = gr.Interface(\n    fn=summarize,\n    inputs=\"text\",\n    outputs=\"text\",\n    examples=[\"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface\"]\n)\n\ndemo.launch(share=True)"
   },
   {
     "objectID": "slides/1_nlp_apps.html#gradio-interface",
@@ -88,7 +88,7 @@
     "href": "slides/1_nlp_apps.html#extended-gradio-app-code",
     "title": "Gradio NLP Apps",
     "section": "Extended Gradio app code",
-    "text": "Extended Gradio app code\n\nWe include more text in the user interface\ndemo.launch(share=True) creates a public link to share the app.\n\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=summarize,\n                    inputs=[gr.Textbox(label=\"Text to summarize\", lines=6)],\n                    outputs=[gr.Textbox(label=\"Result\", lines=3)],\n                    title=\"Text summarization with distilbart-cnn\",\n                    description=\"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!\"\n                    )\n\ndemo.launch(share=True)\n\n# API-Version\n# demo.launch(share=True, server_port=int(os.environ['PORT2']))"
+    "text": "Extended Gradio app code\n\nWe include more text in the user interface\n\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['summary_text']\n\n\ngr.close_all()\ndemo = gr.Interface(fn=summarize,\n                    inputs=[gr.Textbox(label=\"Text to summarize\", lines=6)],\n                    outputs=[gr.Textbox(label=\"Result\", lines=3)],\n                    title=\"Text summarization with distilbart-cnn\",\n                    description=\"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!\"\n                    )\n\ndemo.launch(share=True)\n\n# API-Version\n# demo.launch(share=True, server_port=int(os.environ['PORT2']))"
   },
   {
     "objectID": "slides/1_nlp_apps.html#extended-gradio-output",
@@ -179,7 +179,7 @@
     "href": "slides/2_image_captioning_app.html#image-captioning-model",
     "title": "Gradio Image Captioning App",
     "section": "Image captioning model",
-    "text": "Image captioning model\n\nHere we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.\n\n\nget_completion = pipeline(\n    \"image-to-text\", model=\"Salesforce/blip-image-captioning-base\")\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['generated_text']"
+    "text": "Image captioning model\nHere we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.\n\nget_completion = pipeline(\n    \"image-to-text\", model=\"Salesforce/blip-image-captioning-base\")\n\n\ndef summarize(input):\n    output = get_completion(input)\n    return output[0]['generated_text']"
   },
   {
     "objectID": "slides/2_image_captioning_app.html#api-code-optional",
@@ -298,7 +298,7 @@
     "href": "slides/3_image_generation_app.html#load-model-only-apple-silicon",
     "title": "Gradio Image Creation App",
     "section": "Load model (only Apple Silicon)",
-    "text": "Load model (only Apple Silicon)\n\nIn this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).\nYou’ll find the Windows and Apple Intel version below\n\n\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
+    "text": "Load model (only Apple Silicon)\n\nIn this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2).\nYou’ll find the Windows and Apple Intel version below.\n\n\n\n# Apple Silicon version\n\npipe = DiffusionPipeline.from_pretrained(\"runwayml/stable-diffusion-v1-5\")\n\npipe = pipe.to(\"mps\")\n\n# Recommended if your computer has &lt; 64 GB of RAM\npipe.enable_attention_slicing()\n\n\ndef get_completion(prompt):\n    return pipe(prompt).images[0]"
   },
   {
     "objectID": "slides/3_image_generation_app.html#load-model-only-apple-intel-and-windows",
@@ -439,5 +439,68 @@
     "title": "Gradio Image Creation App",
     "section": "Close all apps",
     "text": "Close all apps\n\ngr.close_all()"
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#basics",
+    "href": "slides/1_nlp_apps.html#basics",
+    "title": "Gradio NLP Apps",
+    "section": "Basics",
+    "text": "Basics\n\nHugging Face is a popular library for Natural Language Processing (NLP).\nProvides easy-to-use interfaces known as pipelines for common NLP tasks.\nTwo main ways to use Hugging Face pipelines: locally or via the API."
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#local-pipeline-usage",
+    "href": "slides/1_nlp_apps.html#local-pipeline-usage",
+    "title": "Gradio NLP Apps",
+    "section": "Local Pipeline Usage",
+    "text": "Local Pipeline Usage\nfrom transformers import pipeline\n\n# Load a pipeline\nclassifier = pipeline('sentiment-analysis')\n\n# Use the pipeline\nresults = classifier('Hugging Face is creating a tool that democratizes AI.')\n\nInstallation Required: Need to install Hugging Face Transformers library.\nData Privacy: Data remains on your local machine, ensuring privacy.\nCost: Free of charge\nPerformance: Performance dependent on your local machine’s capabilities.\nCustomization: Easier to customize and tweak the pipeline."
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#local-pipeline-example",
+    "href": "slides/1_nlp_apps.html#local-pipeline-example",
+    "title": "Gradio NLP Apps",
+    "section": "Local Pipeline example",
+    "text": "Local Pipeline example\nfrom transformers import pipeline\n\n# Load a pipeline\nclassifier = pipeline('sentiment-analysis')\n\n# Use the pipeline\nresults = classifier('Hugging Face is creating a tool that democratizes AI.')"
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#api-pipeline-usage",
+    "href": "slides/1_nlp_apps.html#api-pipeline-usage",
+    "title": "Gradio NLP Apps",
+    "section": "API Pipeline Usage",
+    "text": "API Pipeline Usage\n\nNo Installation required\nData Privacy Concerns: Data sent to Hugging Face servers, may not be suitable for sensitive data.\nCost: May incur charges depending on usage.\nPerformance: Performance dependent on network latency and Hugging Face’s server capabilities.\nCustomization: Limited customization compared to local usage."
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#api-pipeline-example",
+    "href": "slides/1_nlp_apps.html#api-pipeline-example",
+    "title": "Gradio NLP Apps",
+    "section": "API Pipeline example",
+    "text": "API Pipeline example\nimport requests\n\n# Define the API endpoint and data\nurl = 'https://api-inference.huggingface.co/pipeline/sentiment-analysis'\nheaders = {'Authorization': 'Bearer YOUR_API_TOKEN'}\ndata = {'inputs': 'Hugging Face is creating a tool that democratizes AI.'}\n\n# Make a request to the API\nresponse = requests.post(url, headers=headers, json=data)\n\n# Print the response\nprint(response.json())"
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#conclusion",
+    "href": "slides/1_nlp_apps.html#conclusion",
+    "title": "Gradio NLP Apps",
+    "section": "Conclusion",
+    "text": "Conclusion\n\nChoosing between local and API pipeline usage depends on your project’s requirements regarding data privacy, cost, performance, and customization.\nBoth methods offer a straightforward way to leverage the power of Hugging Face for NLP tasks."
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#helper-function-local-summarization-pipeline",
+    "href": "slides/1_nlp_apps.html#helper-function-local-summarization-pipeline",
+    "title": "Gradio NLP Apps",
+    "section": "Helper function: local summarization pipeline",
+    "text": "Helper function: local summarization pipeline\n\nget_completion = pipeline(\n    \"summarization\", \n    model=\"sshleifer/distilbart-cnn-12-6\"\n    )\n\n\nWe use the HuggingFace pipeline."
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#helper-function-for-api-optional-smaller",
+    "href": "slides/1_nlp_apps.html#helper-function-for-api-optional-smaller",
+    "title": "Gradio NLP Apps",
+    "section": "Helper function for API (optional) {smaller}",
+    "text": "Helper function for API (optional) {smaller}\n\nTo run it via API, you could use an Inference Endpoint for the sshleifer/distilbart-cnn-12-6, a 306M parameter distilled model from facebook/bart-large-cnn.\n\n\n\n# # Helper function\n# import requests, json\n\n\n# #Summarization endpoint\n# def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):\n#     headers = {\n#       \"Authorization\": f\"Bearer {hf_api_key}\",\n#       \"Content-Type\": \"application/json\"\n#     }\n#     data = { \"inputs\": inputs }\n#     if parameters is not None:\n#         data.update({\"parameters\": parameters})\n#     response = requests.request(\"POST\",\n#                                 ENDPOINT_URL, headers=headers,\n#                                 data=json.dumps(data)\n#                                )\n#     return json.loads(response.content.decode(\"utf-8\"))"
+  },
+  {
+    "objectID": "slides/1_nlp_apps.html#helper-function-for-api-version",
+    "href": "slides/1_nlp_apps.html#helper-function-for-api-version",
+    "title": "Gradio NLP Apps",
+    "section": "Helper function for API-Version",
+    "text": "Helper function for API-Version\n\nIf you want to use the Inference Endpoint for dslim/bert-base-NER, a 108M parameter fine-tuned BART model on the NER task:\n\n\n\n# API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint\n# get_completion(text, parameters=None, ENDPOINT_URL= API_URL)\n\n# API-Version\n# def ner(input):\n#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)\n#     return {\"text\": input, \"entities\": output}"
   }
 ]
