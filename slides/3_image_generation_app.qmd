@@ -36,6 +36,10 @@ format:
 
 # Image Generation App
 
+In this tutorial, you'll create an image generation app with a Gradio interface.
+
+*This tutorial is mainly based on an excellent course provided by Isa Fulford from OpenAI and Andrew Ng from DeepLearning.AI.*
+
 # Setup
 
 ## Python
@@ -59,7 +63,7 @@ hf_api_key = os.environ['HF_API_KEY']
 ## Load model (only Apple Silicon)
 
 - In this example, we demonstrate how to use Stable Diffusion in Apple Silicon (M1/M2). 
-- You'll find the Windows and Apple Intel version below
+- You'll find the Windows and Apple Intel version below.
 
 . . .
 
