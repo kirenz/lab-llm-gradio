@@ -152,12 +152,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
   </ul></li>
+  <li><a href="#huggingface" id="toc-huggingface" class="nav-link" data-scroll-target="#huggingface">HuggingFace</a>
+  <ul class="collapse">
+  <li><a href="#basics" id="toc-basics" class="nav-link" data-scroll-target="#basics">Basics</a></li>
+  <li><a href="#local-pipeline-usage" id="toc-local-pipeline-usage" class="nav-link" data-scroll-target="#local-pipeline-usage">Local Pipeline Usage</a></li>
+  <li><a href="#local-pipeline-example" id="toc-local-pipeline-example" class="nav-link" data-scroll-target="#local-pipeline-example">Local Pipeline example</a></li>
+  <li><a href="#api-pipeline-usage" id="toc-api-pipeline-usage" class="nav-link" data-scroll-target="#api-pipeline-usage">API Pipeline Usage</a></li>
+  <li><a href="#api-pipeline-example" id="toc-api-pipeline-example" class="nav-link" data-scroll-target="#api-pipeline-example">API Pipeline example</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   <li><a href="#text-summarization-app" id="toc-text-summarization-app" class="nav-link" data-scroll-target="#text-summarization-app">Text Summarization App</a>
   <ul class="collapse">
   <li><a href="#text-summarization" id="toc-text-summarization" class="nav-link" data-scroll-target="#text-summarization">Text summarization</a></li>
-  <li><a href="#helper-function-summarization-pipeline" id="toc-helper-function-summarization-pipeline" class="nav-link" data-scroll-target="#helper-function-summarization-pipeline">Helper function: summarization pipeline</a></li>
-  <li><a href="#api-version" id="toc-api-version" class="nav-link" data-scroll-target="#api-version">API-version</a></li>
-  <li><a href="#api-code-optional" id="toc-api-code-optional" class="nav-link" data-scroll-target="#api-code-optional">API code (optional)</a></li>
+  <li><a href="#helper-function-local-summarization-pipeline" id="toc-helper-function-local-summarization-pipeline" class="nav-link" data-scroll-target="#helper-function-local-summarization-pipeline">Helper function: local summarization pipeline</a></li>
+  <li><a href="#helper-function-for-api-optional-smaller" id="toc-helper-function-for-api-optional-smaller" class="nav-link" data-scroll-target="#helper-function-for-api-optional-smaller">Helper function for API (optional) {smaller}</a></li>
   <li><a href="#text-to-summarize" id="toc-text-to-summarize" class="nav-link" data-scroll-target="#text-to-summarize">Text to summarize</a></li>
   <li><a href="#summarization-example" id="toc-summarization-example" class="nav-link" data-scroll-target="#summarization-example">Summarization example</a></li>
   <li><a href="#gradio-app-code" id="toc-gradio-app-code" class="nav-link" data-scroll-target="#gradio-app-code">Gradio app code</a></li>
@@ -171,7 +179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#what-is-entity-recognition" id="toc-what-is-entity-recognition" class="nav-link" data-scroll-target="#what-is-entity-recognition">What is entity recognition?</a></li>
   <li><a href="#helper-function-named-entity-recognition-pipeline" id="toc-helper-function-named-entity-recognition-pipeline" class="nav-link" data-scroll-target="#helper-function-named-entity-recognition-pipeline">Helper function: Named entity recognition pipeline</a></li>
-  <li><a href="#api-version-1" id="toc-api-version-1" class="nav-link" data-scroll-target="#api-version-1">API-Version</a></li>
+  <li><a href="#helper-function-for-api-version" id="toc-helper-function-for-api-version" class="nav-link" data-scroll-target="#helper-function-for-api-version">Helper function for API-Version</a></li>
   <li><a href="#gradio-ner-app" id="toc-gradio-ner-app" class="nav-link" data-scroll-target="#gradio-ner-app">Gradio NER App</a></li>
   <li><a href="#app-interface" id="toc-app-interface" class="nav-link" data-scroll-target="#app-interface">App interface</a></li>
   <li><a href="#app-with-output" id="toc-app-with-output" class="nav-link" data-scroll-target="#app-with-output">App with output</a></li>
@@ -202,6 +210,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>In this tutorial, you’ll create two NLP apps (text summarization and name entitiy recognition) with a Gradio interface and HuggingFace.</p>
+<p><em>This tutorial is mainly based on an excellent course provided by Isa Fulford from OpenAI and Andrew Ng from DeepLearning.AI.</em></p>
 <section id="setup" class="level1">
 <h1>Setup</h1>
 <section id="python" class="level2">
@@ -215,10 +225,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv, find_dotenv</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> load_dotenv(find_dotenv())  <span class="co"># read local .env file</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> load_dotenv(find_dotenv()) </span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>hf_api_key <span class="op">=</span> os.environ[<span class="st">'HF_API_KEY'</span>]  <span class="co"># HuggingFace API</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+</section>
+<section id="huggingface" class="level1">
+<h1>HuggingFace</h1>
+<section id="basics" class="level2">
+<h2 class="anchored" data-anchor-id="basics">Basics</h2>
+<ul>
+<li>Hugging Face is a popular library for Natural Language Processing (NLP).</li>
+<li>Provides easy-to-use interfaces known as <code>pipelines</code> for common NLP tasks.</li>
+<li>Two main ways to use Hugging Face pipelines: locally or via the API.</li>
+</ul>
+</section>
+<section id="local-pipeline-usage" class="level2 smaller">
+<h2 class="smaller anchored" data-anchor-id="local-pipeline-usage">Local Pipeline Usage</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a pipeline</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>classifier <span class="op">=</span> pipeline(<span class="st">'sentiment-analysis'</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the pipeline</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> classifier(<span class="st">'Hugging Face is creating a tool that democratizes AI.'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p>Installation Required: Need to install Hugging Face Transformers library.</p></li>
+<li><p>Data Privacy: Data remains on your local machine, ensuring privacy.</p></li>
+<li><p>Cost: Free of charge</p></li>
+<li><p>Performance: Performance dependent on your local machine’s capabilities.</p></li>
+<li><p>Customization: Easier to customize and tweak the pipeline.</p></li>
+</ul>
+</section>
+<section id="local-pipeline-example" class="level2">
+<h2 class="anchored" data-anchor-id="local-pipeline-example">Local Pipeline example</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a pipeline</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>classifier <span class="op">=</span> pipeline(<span class="st">'sentiment-analysis'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the pipeline</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> classifier(<span class="st">'Hugging Face is creating a tool that democratizes AI.'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="api-pipeline-usage" class="level2">
+<h2 class="anchored" data-anchor-id="api-pipeline-usage">API Pipeline Usage</h2>
+<ul>
+<li><p>No Installation required</p></li>
+<li><p>Data Privacy Concerns: Data sent to Hugging Face servers, may not be suitable for sensitive data.</p></li>
+<li><p>Cost: May incur charges depending on usage.</p></li>
+<li><p>Performance: Performance dependent on network latency and Hugging Face’s server capabilities.</p></li>
+<li><p>Customization: Limited customization compared to local usage.</p></li>
+</ul>
+</section>
+<section id="api-pipeline-example" class="level2">
+<h2 class="anchored" data-anchor-id="api-pipeline-example">API Pipeline example</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the API endpoint and data</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://api-inference.huggingface.co/pipeline/sentiment-analysis'</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">'Authorization'</span>: <span class="st">'Bearer YOUR_API_TOKEN'</span>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {<span class="st">'inputs'</span>: <span class="st">'Hugging Face is creating a tool that democratizes AI.'</span>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a request to the API</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(url, headers<span class="op">=</span>headers, json<span class="op">=</span>data)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the response</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.json())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<ul>
+<li><p>Choosing between local and API pipeline usage depends on your project’s requirements regarding data privacy, cost, performance, and customization.</p></li>
+<li><p>Both methods offer a straightforward way to leverage the power of Hugging Face for NLP tasks.</p></li>
+</ul>
 </section>
 </section>
 <section id="text-summarization-app" class="level1">
@@ -230,61 +310,59 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>To learn more about text summarization, take a look at <a href="https://kirenz.github.io/huggingface/text-summarization/summarization-pipeline#/title-slide">this tutorial</a></li>
 </ul>
 </section>
-<section id="helper-function-summarization-pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="helper-function-summarization-pipeline">Helper function: summarization pipeline</h2>
+<section id="helper-function-local-summarization-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="helper-function-local-summarization-pipeline">Helper function: local summarization pipeline</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_completion <span class="op">=</span> pipeline(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"summarization"</span>, model<span class="op">=</span><span class="st">"sshleifer/distilbart-cnn-12-6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>get_completion <span class="op">=</span> pipeline(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"summarization"</span>, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"sshleifer/distilbart-cnn-12-6"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="api-version" class="level2 smaller">
-<h2 class="smaller anchored" data-anchor-id="api-version">API-version</h2>
 <ul>
-<li><p>The code would look very similar if you were running it from an API instead of locally.</p></li>
-<li><p>The same is true for all the tutorials in the rest of the course, make sure to check the <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">Pipelines</a> documentation page</p></li>
+<li>We use the HuggingFace <a href="https://huggingface.co/docs/transformers/main_classes/pipelines">pipeline</a>.</li>
 </ul>
 </section>
-<section id="api-code-optional" class="level2">
-<h2 class="anchored" data-anchor-id="api-code-optional">API code (optional)</h2>
+<section id="helper-function-for-api-optional-smaller" class="level2">
+<h2 class="anchored" data-anchor-id="helper-function-for-api-optional-smaller">Helper function for API (optional) {smaller}</h2>
 <ul>
-<li>In our example: to run it via API, you could use an <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for the <code>sshleifer/distilbart-cnn-12-6</code>, a 306M parameter distilled model from <code>facebook/bart-large-cnn</code>.</li>
+<li>To run it via API, you could use an <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for the <code>sshleifer/distilbart-cnn-12-6</code>, a 306M parameter distilled model from <code>facebook/bart-large-cnn</code>.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Helper function</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># import requests, json</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># #Summarization endpoint</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     headers = {</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#       "Authorization": f"Bearer {hf_api_key}",</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#       "Content-Type": "application/json"</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     }</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     data = { "inputs": inputs }</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     if parameters is not None:</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         data.update({"parameters": parameters})</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     response = requests.request("POST",</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 ENDPOINT_URL, headers=headers,</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 data=json.dumps(data)</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#                                )</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     return json.loads(response.content.decode("utf-8"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Helper function</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># import requests, json</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># #Summarization endpoint</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># def get_completion(inputs, parameters=None,ENDPOINT_URL=os.environ['HF_API_SUMMARY_BASE']):</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     headers = {</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#       "Authorization": f"Bearer {hf_api_key}",</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#       "Content-Type": "application/json"</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     }</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     data = { "inputs": inputs }</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     if parameters is not None:</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         data.update({"parameters": parameters})</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     response = requests.request("POST",</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 ENDPOINT_URL, headers=headers,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 data=json.dumps(data)</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#                                )</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     return json.loads(response.content.decode("utf-8"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="text-to-summarize" class="level2 smaller">
 <h2 class="smaller anchored" data-anchor-id="text-to-summarize">Text to summarize</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> (<span class="st">'''One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface. The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. "text", "image" or "audio"); outputs: which component(s) to use for the output (e.g. "text", "image" or "label") '''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> (<span class="st">'''One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface. The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g. "text", "image" or "audio"); outputs: which component(s) to use for the output (e.g. "text", "image" or "label") '''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="summarization-example" class="level2 smaller">
 <h2 class="smaller anchored" data-anchor-id="summarization-example">Summarization example</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>summarize(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>summarize(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>’ Gradio allows you to build demos and share them in just a few lines of code . The core Interface class is initialized with three required parameters: fn: the function to wrap a UI around; inputs: which component(s) to use for the input (e.g.&nbsp;“text”, “image” or “audio) or”label”)’</li>
@@ -294,29 +372,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="smaller anchored" data-anchor-id="gradio-app-code">Gradio app code</h2>
 <ul>
 <li>Getting started with Gradio <code>gr.Interface</code></li>
+<li><code>demo.launch(share=True)</code> creates a public link to share the app.</li>
 <li>If you want to use the API-version, replace <code>demo.launch(share=False)</code> with <code>demo.launch(share=True, server_port=int(os.environ['PORT1']))</code></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Close all current apps</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Start of the app</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    fn<span class="op">=</span>summarize,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span><span class="st">"text"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span><span class="st">"text"</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    examples<span class="op">=</span>[<span class="st">"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface"</span>]</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Close all current apps</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Start of the app</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    fn<span class="op">=</span>summarize,</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    inputs<span class="op">=</span><span class="st">"text"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    outputs<span class="op">=</span><span class="st">"text"</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    examples<span class="op">=</span>[<span class="st">"One of the best ways to share your machine learning model, API, or data science workflow with others is to create an interactive app that allows your users or colleagues to try out the demo in their browsers. Gradio allows you to build demos and share them, all in Python. And usually in just a few lines of code! Note that we shorten the imported name gradio to gr for better readability of code using Gradio. This is a widely adopted convention that you should follow so that anyone working with your code can easily understand it. You’ll also notice that in order to make apps, we create a gr.Interface. This Interface class can wrap any Python function with a user interface"</span>]</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="gradio-interface" class="level2">
@@ -335,26 +414,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="smaller anchored" data-anchor-id="extended-gradio-app-code">Extended Gradio app code</h2>
 <ul>
 <li>We include more text in the user interface</li>
-<li><code>demo.launch(share=True)</code> creates a public link to share the app.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>summarize,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Text to summarize"</span>, lines<span class="op">=</span><span class="dv">6</span>)],</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Result"</span>, lines<span class="op">=</span><span class="dv">3</span>)],</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"Text summarization with distilbart-cnn"</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!"</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT2']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize(<span class="bu">input</span>):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> output[<span class="dv">0</span>][<span class="st">'summary_text'</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>summarize,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Text to summarize"</span>, lines<span class="op">=</span><span class="dv">6</span>)],</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.Textbox(label<span class="op">=</span><span class="st">"Result"</span>, lines<span class="op">=</span><span class="dv">3</span>)],</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"Text summarization with distilbart-cnn"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Summarize any text using the `sshleifer/distilbart-cnn-12-6` model under the hood!"</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT2']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="extended-gradio-output" class="level2">
@@ -375,48 +453,48 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="helper-function-named-entity-recognition-pipeline" class="level2">
 <h2 class="anchored" data-anchor-id="helper-function-named-entity-recognition-pipeline">Helper function: Named entity recognition pipeline</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>get_completion <span class="op">=</span> pipeline(<span class="st">"ner"</span>, model<span class="op">=</span><span class="st">"dslim/bert-base-NER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>get_completion <span class="op">=</span> pipeline(<span class="st">"ner"</span>, model<span class="op">=</span><span class="st">"dslim/bert-base-NER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="api-version-1" class="level2">
-<h2 class="anchored" data-anchor-id="api-version-1">API-Version</h2>
+<section id="helper-function-for-api-version" class="level2">
+<h2 class="anchored" data-anchor-id="helper-function-for-api-version">Helper function for API-Version</h2>
 <ul>
 <li>If you want to use the <a href="https://huggingface.co/inference-endpoints">Inference Endpoint</a> for <code>dslim/bert-base-NER</code>, a 108M parameter fine-tuned BART model on the NER task:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get_completion(text, parameters=None, ENDPOINT_URL= API_URL)</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># def ner(input):</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     return {"text": input, "entities": output}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># API_URL = os.environ['HF_API_NER_BASE'] #NER endpoint</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get_completion(text, parameters=None, ENDPOINT_URL= API_URL)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># def ner(input):</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     output = get_completion(input, parameters=None, ENDPOINT_URL=API_URL)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     return {"text": input, "entities": output}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="gradio-ner-app" class="level2 smaller">
 <h2 class="smaller anchored" data-anchor-id="gradio-ner-app">Gradio NER App</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: output}</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Here we introduce a new tag, examples, easy to use examples for your application</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina and I study at HdM Stuttgart"</span>])</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT3']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: output}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># Here we introduce a new tag, examples, easy to use examples for your application</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina and I study at HdM Stuttgart"</span>])</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT3']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="app-interface" class="level2">
@@ -430,42 +508,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="gradio-ner-app-with-merged-tokens" class="level2">
 <h2 class="anchored" data-anchor-id="gradio-ner-app-with-merged-tokens">Gradio NER app with merged tokens</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> merge_tokens(tokens):</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    merged_tokens <span class="op">=</span> []</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> token <span class="kw">in</span> tokens:</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> merged_tokens <span class="kw">and</span> token[<span class="st">'entity'</span>].startswith(<span class="st">'I-'</span>) <span class="kw">and</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>][<span class="st">'entity'</span>].endswith(token[<span class="st">'entity'</span>][<span class="dv">2</span>:]):</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If current token continues the entity of the last one, merge them</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            last_token <span class="op">=</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'word'</span>] <span class="op">+=</span> token[<span class="st">'word'</span>].replace(<span class="st">'##'</span>, <span class="st">''</span>)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'end'</span>] <span class="op">=</span> token[<span class="st">'end'</span>]</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'score'</span>] <span class="op">=</span> (last_token[<span class="st">'score'</span>] <span class="op">+</span> token[<span class="st">'score'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Otherwise, add the token to the list</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            merged_tokens.append(token)</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> merged_tokens</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    merged_tokens <span class="op">=</span> merge_tokens(output)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: merged_tokens}</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina, I live in Stuttgart and study at HdM Stuttgart"</span>])</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT4']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> merge_tokens(tokens):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    merged_tokens <span class="op">=</span> []</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> token <span class="kw">in</span> tokens:</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> merged_tokens <span class="kw">and</span> token[<span class="st">'entity'</span>].startswith(<span class="st">'I-'</span>) <span class="kw">and</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>][<span class="st">'entity'</span>].endswith(token[<span class="st">'entity'</span>][<span class="dv">2</span>:]):</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If current token continues the entity of the last one, merge them</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            last_token <span class="op">=</span> merged_tokens[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'word'</span>] <span class="op">+=</span> token[<span class="st">'word'</span>].replace(<span class="st">'##'</span>, <span class="st">''</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'end'</span>] <span class="op">=</span> token[<span class="st">'end'</span>]</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            last_token[<span class="st">'score'</span>] <span class="op">=</span> (last_token[<span class="st">'score'</span>] <span class="op">+</span> token[<span class="st">'score'</span>]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Otherwise, add the token to the list</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            merged_tokens.append(token)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> merged_tokens</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ner(<span class="bu">input</span>):</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> get_completion(<span class="bu">input</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    merged_tokens <span class="op">=</span> merge_tokens(output)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"text"</span>: <span class="bu">input</span>, <span class="st">"entities"</span>: merged_tokens}</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(fn<span class="op">=</span>ner,</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>                    inputs<span class="op">=</span>[gr.Textbox(</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>                        label<span class="op">=</span><span class="st">"Text to find entities"</span>, lines<span class="op">=</span><span class="dv">2</span>)],</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>                    outputs<span class="op">=</span>[gr.HighlightedText(label<span class="op">=</span><span class="st">"Text with entities"</span>)],</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                    title<span class="op">=</span><span class="st">"NER with dslim/bert-base-NER"</span>,</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>                    description<span class="op">=</span><span class="st">"Find entities using the `dslim/bert-base-NER` model under the hood!"</span>,</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>                    allow_flagging<span class="op">=</span><span class="st">"never"</span>,</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>                    examples<span class="op">=</span>[<span class="st">"My name is Jan, I'm a professor at HdM Stuttgart and I live in Stuttgart"</span>, <span class="st">"My name is Lina, I live in Stuttgart and study at HdM Stuttgart"</span>])</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>demo.launch(share<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co"># API-Version</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co"># demo.launch(share=True, server_port=int(os.environ['PORT4']))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="gradio-output" class="level2">
@@ -475,7 +553,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="close-all-apps" class="level2">
 <h2 class="anchored" data-anchor-id="close-all-apps">Close all apps</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>gr.close_all()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

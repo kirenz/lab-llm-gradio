@@ -185,6 +185,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>In this tutorial, you’ll create an image captioning app with a Gradio interface.</p>
+<p><em>This tutorial is mainly based on an excellent course provided by Isa Fulford from OpenAI and Andrew Ng from DeepLearning.AI.</em></p>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 </section>
@@ -208,9 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="image-captioning-model" class="level2">
 <h2 class="anchored" data-anchor-id="image-captioning-model">Image captioning model</h2>
-<ul>
-<li>Here we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.</li>
-</ul>
+<p>Here we’ll be using the Salesforce/blip-image-captioning-base a 14M parameter captioning model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>get_completion <span class="op">=</span> pipeline(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"image-to-text"</span>, model<span class="op">=</span><span class="st">"Salesforce/blip-image-captioning-base"</span>)</span>
